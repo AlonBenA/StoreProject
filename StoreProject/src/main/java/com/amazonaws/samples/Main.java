@@ -123,14 +123,14 @@ public class Main {
 	   	 	System.out.println("put 10 VODKA in table");
 	   	 	DDBH.putItem(ItemName, 10);
 	   	 	
-	   	 System.out.println("put 20 VODKA in table");
+	   	 	System.out.println("put 30 VODKA in table");
 	   	 	DDBH.putItem(ItemName, 30);
 	   	 	
 	   	 	
 	   	 	Amount = DDBH.retrieveItemAmount(ItemName);
 	   	 	System.out.println("The Amount of " + ItemName + " is " + Amount);
 
-	   	 	
+	   	 	DDBH.deleteItem(ItemName);
 	   	 	
 	   	 	DDBH.deleteTable();
 	   	 

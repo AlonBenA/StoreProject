@@ -18,7 +18,10 @@ import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.PrimaryKey;
 import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.document.spec.DeleteItemSpec;
+import com.amazonaws.services.dynamodbv2.document.DeleteItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 
 public class DynamoDBHandler {
@@ -133,6 +136,30 @@ public class DynamoDBHandler {
 	        System.err.println(e.getMessage());
 
 	    }
+	    
+	}
+	
+	
+	
+	public void deleteItem(String ItemName) 
+	{
+	    Table table = dynamoDB.getTable(table_name);
+	    int Amount = retrieveItemAmount(ItemName);
+
+	        try {
+
+	            DeleteItemSpec deleteItemSpec = new DeleteItemSpec().withPrimaryKey("Name", ItemName);
+
+	            DeleteItemOutcome outcome = table.deleteItem(deleteItemSpec);
+	            
+	            System.out.println("the item " + ItemName + " was deleteed");
+
+	        }
+	        catch (Exception e) {
+	            System.err.println("Error deleting item in " + table_name);
+	            System.err.println(e.getMessage());
+	        }
+	    
 	    
 	}
 	
