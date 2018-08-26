@@ -17,7 +17,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.s3.model.S3Object;
 
-public class Main {
+public class InitMain {
 
 	public static void main(String[] args) {
 		
