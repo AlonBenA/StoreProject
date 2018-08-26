@@ -71,7 +71,7 @@ public class S3Handler {
 	}
 	
 	
-	public void putItem(File file,String key)
+	public void putFile(File file,String key)
 	{
 		try {
 		
@@ -94,6 +94,7 @@ public class S3Handler {
             System.out.println("Error Message: " + ace.getMessage());
         }
 	}
+	
 	
 	public S3Object getItem(String key)
 	{

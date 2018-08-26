@@ -23,7 +23,7 @@ public class Main {
 		
 
 		
-		 testSQS();
+		testDynamoDB();
 		
 		
 	}
@@ -35,7 +35,7 @@ public class Main {
 	        AWSCredentials credentials = null;
 			String region = "us-east-2";
 	        String bucketName = "first-s3-bucket" + UUID.randomUUID();
-	        String key = "MyObjectKey";
+	        String key = "VODKA";
 	        
 	        try {
 	            credentials = new ProfileCredentialsProvider("default").getCredentials();
@@ -49,20 +49,22 @@ public class Main {
 	        
 	        S3Handler s3Handler = new S3Handler(credentials, region, bucketName);
 	        
-	        
+
 	        try {
-				s3Handler.putItem(createSampleFile(), key);
+	        	
+	        	
+				s3Handler.putFile(new File("VODKA.jpg"), key);
 				
 				S3Object S3object = s3Handler.getItem(key);
 				
-				displayTextInputStream(S3object.getObjectContent());
+				//displayTextInputStream(S3object.getObjectContent());
 				
 				
 				s3Handler.DeleteObjectFromBucket(key);
 				
 				s3Handler.DeleteBucket();
 				
-			} catch (IOException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -75,7 +77,7 @@ public class Main {
 	 public static void testSQS()
 	 {
 			String region = "us-east-2";
-			String queueName = new String("myQueue1");
+			String queueName = new String("myQueue");
 			ProfileCredentialsProvider credentialsProvider;
 			
 			// Read Credentials
@@ -101,6 +103,41 @@ public class Main {
 	        
 	        sqsHandler.DeleteQueue();
 	 }
+	 
+	 
+	    public static void testDynamoDB()
+	    {
+	        /* Read the name from command args */
+	        String table_name = "HelloTable";
+	        String region = new String("us-east-2");
+	        ProfileCredentialsProvider credentialsProvider;
+	        String ItemName = "VODKA";
+		    int Amount;
+	        
+	   		
+	   	 // Read Credentials
+	   	 	credentialsProvider = readCredentials();
+	   	 	
+	   	 	DynamoDBHandler DDBH = new DynamoDBHandler(region, table_name, credentialsProvider);
+	   	 	
+	   	 	System.out.println("put 10 VODKA in table");
+	   	 	DDBH.putItem(ItemName, 10);
+	   	 	
+	   	 System.out.println("put 20 VODKA in table");
+	   	 	DDBH.putItem(ItemName, 30);
+	   	 	
+	   	 	
+	   	 	Amount = DDBH.retrieveItemAmount(ItemName);
+	   	 	System.out.println("The Amount of " + ItemName + " is " + Amount);
+
+	   	 	
+	   	 	
+	   	 	DDBH.deleteTable();
+	   	 
+	   	 
+	    }
+	    
+	 
 	
     public static ProfileCredentialsProvider readCredentials() {
     	
@@ -166,5 +203,7 @@ public class Main {
         }
     }
     
+    
+
     
 }
