@@ -9,7 +9,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.UUID;
+import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Map.Entry;
+import java.util.Scanner;
 
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.AmazonClientException;
@@ -18,14 +21,179 @@ import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.s3.model.S3Object;
 
 public class InitMain {
+	
+	//this class is for initial the infrastructure of the shop in empty aws system
+static AWSCredentials credentials =  new ProfileCredentialsProvider("default").getCredentials();
+static int NumberOfshops = 0;
+static String region = "us-east-2";
+static ArrayList<String> keys = new ArrayList<String>();
+static 	String bucketPicName = "picbucket879012";
+static String queueMissName = new String("queueMiss");
+static String queueOrderName = new String("queueOrder");
+static String table_name = "DatabaseShop";
+static ProfileCredentialsProvider credentialsProvider  = readCredentials(); 
+static Scanner sc = new Scanner(System.in);
+	
 
 	public static void main(String[] args) {
+		int choise = 1;
+
+		System.out.println("wellcome to init store program");
+		System.out.println("-------------------------------");
+		System.out.println("1) init a new store");
+		System.out.println("2) shutdown store");
+		System.out.println("enter your choise:");
 		
+		
+		try {
+			choise= sc.nextInt();
+						
+			
+			if(choise == 1)
+			{
+				initStore();
+				System.out.println("store is up");
+			}
+			else if(choise == 2)
+			{
+
+			 	DeleteStore();
+			 	System.out.println("Store is Down");
+			}
+			else
+			{
+				System.out.println("it's not 1 or 2");
+			}	
+		}catch(Exception e)
+		{
+			System.out.println("Exception it's not 1 or 2");
+		}			
 
 		
-		testDynamoDB();
+
+  	
 		
 		
+	}
+	
+	 public static void initStore()
+	 {
+		 keys.add("vodka");
+		 keys.add("beer");
+		 keys.add("arak");
+		 keys.add("whiskey");
+		 keys.add("XL");
+		 keys.add("wine");
+		 
+	
+
+	        try {
+	            
+	            
+	            System.out.println("Enter number of shops ");
+	            
+	            while(NumberOfshops < 1)
+	            {
+	            	NumberOfshops= sc.nextInt();
+	            }
+	            
+	        } catch (Exception e) {
+	            throw new AmazonClientException(
+	                    "Cannot load the credentials from the credential profiles file. " +
+	                    "Please make sure that your credentials file is at the correct " +
+	                    "location (C:\\Users\\alon\\.aws\\credentials), and is in valid format.",
+	                    e);
+	        }
+		 
+		 
+			//init bucket for pictures of products
+		 	initpicbucketS3();
+		 	initSQS();
+		 	initDynamoDB();
+			
+	 }
+	
+	 public static void  initSQS()
+	 {
+		
+	        SQSHandler sqsHandler = new SQSHandler(credentialsProvider, region, queueMissName);
+	        SQSHandler sqsHandler2 = new SQSHandler(credentialsProvider, region, queueOrderName);
+	 }
+	 
+	 public static void  initDynamoDB()
+	 {
+		 	int i;
+	        DynamoDBHandler DDBH;
+	         
+	        
+	        for(i=0 ; i<NumberOfshops ; i++)
+	        {
+	        DDBH = new DynamoDBHandler(region, table_name+i, credentialsProvider);
+	        }
+
+	 }
+
+	
+	public static void initpicbucketS3()
+	 {
+	        S3Handler s3Handler = new S3Handler(credentials, region, bucketPicName);
+	        
+
+	        try {
+	        	for(String key: keys) {
+	        		s3Handler.putFile(new File(key+".jpg"), key);
+	        	}
+	        					
+			} catch (Exception e) {
+				// 
+				e.printStackTrace();
+			}
+	        
+	 }
+	
+	
+	 
+	 private static void DeleteStore() {
+		 
+		 	int i;
+	        DynamoDBHandler DDBH;
+	        
+	        getNumberOfStores();
+	        
+	        
+	        	
+	        S3Handler s3Handler = new S3Handler(credentials, region, bucketPicName);
+	        SQSHandler sqsHandler = new SQSHandler(credentialsProvider, region, queueMissName);
+	        SQSHandler sqsHandler2 = new SQSHandler(credentialsProvider, region, queueOrderName);
+	        
+	        
+			 keys.add("vodka");
+			 keys.add("beer");
+			 keys.add("arak");
+			 keys.add("whiskey");
+			 keys.add("XL");
+			 keys.add("wine");
+			 
+	        
+	        
+	    	for(String key: keys) {
+       		s3Handler.DeleteObjectFromBucket(key);
+       	}
+	    		    	
+	    	s3Handler.DeleteBucket();
+	    	
+	        
+	        sqsHandler.DeleteQueue();
+	        sqsHandler2.DeleteQueue();
+	        
+	        
+	        for(i=0 ; i<NumberOfshops ; i++)
+	        {
+	        DDBH = new DynamoDBHandler(region, table_name+i, credentialsProvider);
+	        DDBH.deleteTable();
+	        }
+	    	
+
 	}
 	
 	
@@ -108,7 +276,7 @@ public class InitMain {
 	    public static void testDynamoDB()
 	    {
 	        /* Read the name from command args */
-	        String table_name = "HelloTable";
+	        String table_name = "Table";
 	        String region = new String("us-east-2");
 	        ProfileCredentialsProvider credentialsProvider;
 	        String ItemName = "VODKA";
@@ -203,7 +371,25 @@ public class InitMain {
         }
     }
     
-    
+    public static void getNumberOfStores()
+    {
+
+        try {      
+            System.out.println("Enter number of shops ");
+            
+            while(NumberOfshops < 1)
+            {
+            	NumberOfshops= sc.nextInt();
+            }
+            
+        }catch (InputMismatchException  e) {
+
+        	System.out.println("wrong number");
+        	NumberOfshops = 1;
+        	
+        	
+		} 
+    }
 
     
 }
