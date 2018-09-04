@@ -10,11 +10,16 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.UUID;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.InputMismatchException;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
+import java.util.Set;
 
 import com.amazonaws.services.sqs.model.Message;
+import com.sun.javafx.geom.PickRay;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
@@ -26,13 +31,20 @@ public class InitMain {
 static AWSCredentials credentials =  new ProfileCredentialsProvider("default").getCredentials();
 static int NumberOfshops = 0;
 static String region = "us-east-2";
-static ArrayList<String> keys = new ArrayList<String>();
-static 	String bucketPicName = "picbucket879012";
+static HashMap<String, String> itemCate = new HashMap<String, String>();
+
+//bucketPicName 
+static 	String bucketPicName = "afekapicturebucketalonitayoran";
+
+//queue names
 static String queueMissName = new String("queueShortage");
 static String queueOrderName = new String("queueOrder");
+
+//tables names
 static String table_name = "DatabaseShop";
 static String order_table_name = "order_table";
 static String items_table_name = "items_table";
+
 // columns name of tables
 static String orderId = "orderId";
 static String orderContent = "orderContent";
@@ -48,6 +60,7 @@ static Scanner sc = new Scanner(System.in);
 	public static void main(String[] args) {
 			
 		store();
+		
 	}
 	
 	
@@ -87,16 +100,15 @@ static Scanner sc = new Scanner(System.in);
 		}
 	}
 	
+	 public static void initItemsList()
+	 {
+		 itemCate.put("alcohol", "vodka,beer,arak,whiskey,wine,");
+		 itemCate.put("drinks" , "XL,");
+	 }
+	 
 	 public static void initStore()
 	 {
-		 keys.add("vodka");
-		 keys.add("beer");
-		 keys.add("arak");
-		 keys.add("whiskey");
-		 keys.add("XL");
-		 keys.add("wine");
-		 
-	
+		 initItemsList();
 
 	        try {
 	            
@@ -118,13 +130,28 @@ static Scanner sc = new Scanner(System.in);
 		 
 		 
 			//init bucket for pictures of products
+		 	
 		 	initDynamoDB();
 		 	initpicbucketS3();
 		 	initSQS();
+		 	enterItemsNames();
 			
 	 }
 	
-	 public static void  initSQS()
+	 private static void enterItemsNames() {
+		 DynamoDBHandler DDBH = new DynamoDBHandler(region, items_table_name, credentialsProvider,category,items);
+
+		 Set set = itemCate.entrySet();
+         Iterator iterator = set.iterator();
+         while(iterator.hasNext()) {
+            Map.Entry mentry = (Map.Entry)iterator.next();
+   		 	DDBH.putStringToTable(mentry.getKey().toString(), mentry.getValue().toString());
+
+            }
+         }
+
+
+	public static void  initSQS()
 	 {
 		//to open new sqs
 	        SQSHandler sqsHandler = new SQSHandler(credentialsProvider, region, queueMissName);
@@ -148,19 +175,26 @@ static Scanner sc = new Scanner(System.in);
 	
 	public static void initpicbucketS3()
 	 {
-	        S3Handler s3Handler = new S3Handler(credentials, region, bucketPicName);
-	        
 
-	        try {
-	        	for(String key: keys) {
-	        		s3Handler.putFile(new File(key+".jpg"), key);
-	        	}
-	        					
-			} catch (Exception e) {
-				// 
-				e.printStackTrace();
-			}
-	        
+        S3Handler s3Handler = new S3Handler(credentials, region, bucketPicName);
+        
+        try {
+        	 /* Display content using Iterator*/
+            Set set = itemCate.entrySet();
+            Iterator iterator = set.iterator();
+            while(iterator.hasNext()) {
+               Map.Entry mentry = (Map.Entry)iterator.next();
+               String[] itemlist = mentry.getValue().toString().split(",");
+               for(String s:itemlist) {
+            	   if(s.compareTo("")!=0)
+    	               s3Handler.putFile(new File(s+".jpg"), s);
+               }
+            }
+        					
+		} catch (Exception e) {
+			// 
+			e.printStackTrace();
+		}
 	 }
 	
 	
@@ -179,18 +213,18 @@ static Scanner sc = new Scanner(System.in);
 	        SQSHandler sqsHandler2 = new SQSHandler(credentialsProvider, region, queueOrderName);
 	        
 	        
-			 keys.add("vodka");
-			 keys.add("beer");
-			 keys.add("arak");
-			 keys.add("whiskey");
-			 keys.add("XL");
-			 keys.add("wine");
-			 
+			 initItemsList();
 	        
-	        
-	    	for(String key: keys) {
-       		s3Handler.DeleteObjectFromBucket(key);
-       	}
+			 Set set = itemCate.entrySet();
+	            Iterator iterator = set.iterator();
+	            while(iterator.hasNext()) {
+	               Map.Entry mentry = (Map.Entry)iterator.next();
+	               String[] itemlist = mentry.getValue().toString().split(",");
+	               for(String s:itemlist) {
+	            	   if(s.compareTo("")!=0)
+	            		   s3Handler.DeleteObjectFromBucket(s);
+	            }
+	            }
 	    		    	
 	    	s3Handler.DeleteBucket();
 	    	
@@ -210,7 +244,7 @@ static Scanner sc = new Scanner(System.in);
 	        DDBH.deleteTable();
 	        }
 	    	
-
+	            
 	}
 	
 	
