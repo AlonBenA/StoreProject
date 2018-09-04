@@ -26,11 +26,18 @@ public class DynamoDBHandler {
 	private String table_name;
 	private AmazonDynamoDB ddb;
 	private DynamoDB dynamoDB;
+	private String colKey;
+	private String colVal;
+
 	
-	public DynamoDBHandler(String region,String table_name, ProfileCredentialsProvider credentialsProvider)
+	public DynamoDBHandler(String region,String table_name, ProfileCredentialsProvider credentialsProvider,String colKey,String colVal)
 	{
 		this.region = region;
+		this.colVal = colVal;
+		this.colKey = colKey;
+
 		this.table_name = table_name;
+
 		init(credentialsProvider);
 	}
 	
@@ -71,9 +78,6 @@ public class DynamoDBHandler {
             System.out.println("");
         }
         return false;
-
-
-
 	}
 	
 	
@@ -82,8 +86,8 @@ public class DynamoDBHandler {
 		
 		 // Create the Request
 		CreateTableRequest request = new CreateTableRequest()
-		        .withAttributeDefinitions(new AttributeDefinition("Name", ScalarAttributeType.S))
-		         .withKeySchema(new KeySchemaElement("Name", KeyType.HASH))
+		        .withAttributeDefinitions(new AttributeDefinition(colKey, ScalarAttributeType.S))
+		         .withKeySchema(new KeySchemaElement(colKey, KeyType.HASH))
 		         .withProvisionedThroughput(new ProvisionedThroughput(
 		                  new Long(5), new Long(5)))
 		         .withTableName(table_name);
@@ -123,7 +127,7 @@ public class DynamoDBHandler {
 	    Table table = dynamoDB.getTable(table_name);
 	    
 	    try {
-	    	Item item = new Item().withPrimaryKey("Name", Name).withNumber("Amount", Amount);
+	    	Item item = new Item().withPrimaryKey(colKey, Name).withNumber(colVal, Amount);
 	        table.putItem(item);         
 	        
 	    }
@@ -134,17 +138,34 @@ public class DynamoDBHandler {
 	    }
 	    
 	}
-	
+
+	//Put a new item with the Amount on the dynamodb table
+	//If the name already exists then its values are overridden by the new ones
+	public void putStringToTable(String key, String value)
+	{
+	    Table table = dynamoDB.getTable(table_name);
+	    
+	    try {
+	    	Item item = new Item().withPrimaryKey(colKey, key).withString(colVal, value);
+	        table.putItem(item);         
+	        
+	    }
+	    catch (Exception e) {
+	        System.err.println("Create items failed.");
+	        System.err.println(e.getMessage());
+
+	    }
+    
+	}
 	
 	
 	public void deleteItem(String ItemName) 
 	{
 	    Table table = dynamoDB.getTable(table_name);
-	    int Amount = retrieveItemAmount(ItemName);
 
 	        try {
 
-	            DeleteItemSpec deleteItemSpec = new DeleteItemSpec().withPrimaryKey("Name", ItemName);
+	            DeleteItemSpec deleteItemSpec = new DeleteItemSpec().withPrimaryKey(colKey, ItemName);
 
 	            DeleteItemOutcome outcome = table.deleteItem(deleteItemSpec);
 	            
@@ -166,8 +187,8 @@ public class DynamoDBHandler {
 
 	    try {
 
-	        Item item = table.getItem("Name", ItemName, "Amount", null);
-	        Amount = Integer.parseInt(item.get("Amount").toString());
+	        Item item = table.getItem(colKey, ItemName, colVal, null);
+	        Amount = Integer.parseInt(item.get(colVal).toString());
 
 	    }
 	    catch (Exception e) {

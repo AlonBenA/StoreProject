@@ -28,14 +28,31 @@ static int NumberOfshops = 0;
 static String region = "us-east-2";
 static ArrayList<String> keys = new ArrayList<String>();
 static 	String bucketPicName = "picbucket879012";
-static String queueMissName = new String("queueMiss");
+static String queueMissName = new String("queueShortage");
 static String queueOrderName = new String("queueOrder");
 static String table_name = "DatabaseShop";
+static String order_table_name = "order_table";
+static String items_table_name = "items_table";
+// columns name of tables
+static String orderId = "orderId";
+static String orderContent = "orderContent";
+static String category = "category";
+static String items = "items";
+static String itemName = "itemName";
+static String amount = "amount";
+
 static ProfileCredentialsProvider credentialsProvider  = readCredentials(); 
 static Scanner sc = new Scanner(System.in);
 	
 
 	public static void main(String[] args) {
+			
+		store();
+	}
+	
+	
+	public static void store()
+	{
 		int choise = 1;
 
 		System.out.println("wellcome to init store program");
@@ -67,13 +84,7 @@ static Scanner sc = new Scanner(System.in);
 		}catch(Exception e)
 		{
 			System.out.println("Exception it's not 1 or 2");
-		}			
-
-		
-
-  	
-		
-		
+		}
 	}
 	
 	 public static void initStore()
@@ -107,15 +118,15 @@ static Scanner sc = new Scanner(System.in);
 		 
 		 
 			//init bucket for pictures of products
+		 	initDynamoDB();
 		 	initpicbucketS3();
 		 	initSQS();
-		 	initDynamoDB();
 			
 	 }
 	
 	 public static void  initSQS()
 	 {
-		
+		//to open new sqs
 	        SQSHandler sqsHandler = new SQSHandler(credentialsProvider, region, queueMissName);
 	        SQSHandler sqsHandler2 = new SQSHandler(credentialsProvider, region, queueOrderName);
 	 }
@@ -124,11 +135,12 @@ static Scanner sc = new Scanner(System.in);
 	 {
 		 	int i;
 	        DynamoDBHandler DDBH;
-	         
-	        
+	        DDBH = new DynamoDBHandler(region, order_table_name, credentialsProvider,orderId,orderContent);
+	        DDBH = new DynamoDBHandler(region, items_table_name, credentialsProvider,category,items);
+
 	        for(i=0 ; i<NumberOfshops ; i++)
 	        {
-	        DDBH = new DynamoDBHandler(region, table_name+i, credentialsProvider);
+	        	DDBH = new DynamoDBHandler(region, table_name+i, credentialsProvider,itemName,amount);
 	        }
 
 	 }
@@ -186,10 +198,15 @@ static Scanner sc = new Scanner(System.in);
 	        sqsHandler.DeleteQueue();
 	        sqsHandler2.DeleteQueue();
 	        
-	        
+	        DDBH = new DynamoDBHandler(region, order_table_name, credentialsProvider,orderId,orderContent);
+	        DDBH.deleteTable();
+
+	        DDBH = new DynamoDBHandler(region, items_table_name, credentialsProvider,category,items);
+	        DDBH.deleteTable();
+
 	        for(i=0 ; i<NumberOfshops ; i++)
 	        {
-	        DDBH = new DynamoDBHandler(region, table_name+i, credentialsProvider);
+	        DDBH = new DynamoDBHandler(region, table_name+i, credentialsProvider,itemName,amount);
 	        DDBH.deleteTable();
 	        }
 	    	
@@ -286,7 +303,7 @@ static Scanner sc = new Scanner(System.in);
 	   	 // Read Credentials
 	   	 	credentialsProvider = readCredentials();
 	   	 	
-	   	 	DynamoDBHandler DDBH = new DynamoDBHandler(region, table_name, credentialsProvider);
+	   	 	DynamoDBHandler DDBH = new DynamoDBHandler(region, table_name, credentialsProvider,itemName,amount);
 	   	 	
 	   	 	System.out.println("put 10 VODKA in table");
 	   	 	DDBH.putItem(ItemName, 10);
