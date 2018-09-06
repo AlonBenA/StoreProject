@@ -1,7 +1,7 @@
 package com.amazonaws.samples;
 
 public class Product {
-
+//
 	private String name;
 	private int amount;
 

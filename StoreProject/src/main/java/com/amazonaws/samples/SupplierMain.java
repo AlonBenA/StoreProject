@@ -9,7 +9,7 @@ import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.sqs.model.Message;
 
 public class SupplierMain {
-	
+	//
 	static String queueMissName = new String("queueShortage");
 	static String table_name = "DatabaseShop";
 	static String region = "us-east-2";
