@@ -112,7 +112,6 @@ static Scanner sc = new Scanner(System.in);
 
 	        try {
 	            
-	            
 	            System.out.println("Enter number of shops ");
 	            
 	            while(NumberOfshops < 1)
@@ -441,6 +440,43 @@ static Scanner sc = new Scanner(System.in);
         	
 		} 
     }
-
- //   
+    
+	public static int choseFormUser()
+	{
+		int choise = 0;
+		
+		while(choise != 0) {
+			choise = getNumberFromUser();
+			if(choise == 1 || choise == 2)
+			{
+				
+			}
+			else
+			{
+				choise = 0;
+			}
+		}
+		
+		return choise;
+	}
+	
+	public static int getNumberFromUser()
+	{
+		int number = 0;
+		
+		
+		
+		try {
+			number= sc.nextInt();
+						
+		}catch(Exception e)
+		{
+			System.out.println("not a number");
+		}
+	
+		
+		
+		return number;
+	}
+    
 }
