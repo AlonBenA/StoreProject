@@ -28,6 +28,7 @@ public class DynamoDBHandler {
 	private DynamoDB dynamoDB;
 	private String colKey;
 	private String colVal;
+	private String colVal2;
 
 	
 	public DynamoDBHandler(String region,String table_name, ProfileCredentialsProvider credentialsProvider,String colKey,String colVal)
@@ -35,14 +36,27 @@ public class DynamoDBHandler {
 		this.region = region;
 		this.colVal = colVal;
 		this.colKey = colKey;
+		this.colVal2 = "unused";
 
 		this.table_name = table_name;
 
-		init(credentialsProvider);
+		initTable(credentialsProvider);
+	}
+	
+	public DynamoDBHandler(String region,String table_name, ProfileCredentialsProvider credentialsProvider,String colKey,String colVal,String colVal2)
+	{
+		this.region = region;
+		this.colVal = colVal;
+		this.colKey = colKey;
+		this.colVal2 = colVal2;
+
+		this.table_name = table_name;
+
+		initTable(credentialsProvider);
 	}
 	
 	
-	private void init(ProfileCredentialsProvider credentialsProvider)
+	private void initTable(ProfileCredentialsProvider credentialsProvider)
 	{
 		ddb = AmazonDynamoDBClientBuilder.standard()
 	    		 .withCredentials(credentialsProvider)
@@ -65,6 +79,8 @@ public class DynamoDBHandler {
 		}
 
 	}
+	
+	
 	
 	
 	public boolean tableExists(String table_name)
@@ -106,7 +122,6 @@ public class DynamoDBHandler {
 	}
 	
 	
-	
 	public void deleteTable()
 	{
 		DeleteTableRequest request = new DeleteTableRequest().withTableName(table_name);
@@ -139,9 +154,9 @@ public class DynamoDBHandler {
 	    
 	}
 
-	//Put a new item with the Amount on the dynamodb table
-	//If the name already exists then its values are overridden by the new ones
-	public void putStringToTable(String key, String value)
+	//Put a new Category with the items on the dynamodb table
+	//If the Category already exists then its values are overridden by the new ones
+	public void putCategoryToTable(String key, String value)
 	{
 	    Table table = dynamoDB.getTable(table_name);
 	    
@@ -158,19 +173,62 @@ public class DynamoDBHandler {
     
 	}
 	
-	//Put a new item with the Amount on the dynamodb table
-	//If the name already exists then its values are overridden by the new ones
+	
+	//Put a new order with the items and status on the dynamodb table
+	//If the key already exists then its values are overridden by the new ones
+	public void putOrderToTable(String key, String value,String status)
+	{
+	    Table table = dynamoDB.getTable(table_name);
+	    
+	    try {
+	    	Item item = new Item().withPrimaryKey(colKey, key).withString(colVal, value)
+	    			.withString(colVal2, status);
+	        table.putItem(item);         
+	        
+	    }
+	    catch (Exception e) {
+	        System.err.println("Create items failed.");
+	        System.err.println(e.getMessage());
+
+	    }
+    
+	}
+	
+	
+
 	public String retrieveItemString(String key)
 	{
 		    Table table = dynamoDB.getTable(table_name);
-		    String value = null;
-		    try {
 
-		        Item item = table.getItem(colKey, key, colVal, null);
-		        value = item.get(colVal).toString();
+		    String value = "";
+		    
+		    try {
+		    	
+		        Item item = table.getItem(colKey,key);
+		        value = item.getString(colVal);
 		    }
 		    catch (Exception e) {
-		        System.err.println("GetItem failed.");
+		        System.err.println("Get Item failed.");
+		        System.err.println(e.getMessage());
+		    }
+		    return value;
+		}
+	
+	
+	
+	public String retrieveItemStatus(String key)
+	{
+		    Table table = dynamoDB.getTable(table_name);
+
+		    String value = "";
+		    
+		    try {
+		    	
+		        Item item = table.getItem(colKey,key);
+		        value = item.getString(colVal2);
+		    }
+		    catch (Exception e) {
+		        System.err.println("Get Item failed.");
 		        System.err.println(e.getMessage());
 		    }
 		    return value;
@@ -205,7 +263,7 @@ public class DynamoDBHandler {
 
 	    try {
 
-	        Item item = table.getItem(colKey, ItemName, colVal, null);
+	        Item item = table.getItem(colKey, ItemName);
 	        Amount = Integer.parseInt(item.get(colVal).toString());
 
 	    }

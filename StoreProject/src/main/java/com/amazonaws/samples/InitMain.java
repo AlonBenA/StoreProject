@@ -48,6 +48,8 @@ static String items_table_name = "items_table";
 // columns name of tables
 static String orderId = "orderId";
 static String orderContent = "orderContent";
+static String orderStatus = "status";
+
 static String category = "category";
 static String items = "items";
 static String itemName = "itemName";
@@ -59,7 +61,7 @@ static Scanner sc = new Scanner(System.in);
 
 	public static void main(String[] args) {
 			
-		store();
+		testOrderDynamoDB();
 		
 	}
 	
@@ -144,7 +146,7 @@ static Scanner sc = new Scanner(System.in);
          Iterator iterator = set.iterator();
          while(iterator.hasNext()) {
             Map.Entry mentry = (Map.Entry)iterator.next();
-   		 	DDBH.putStringToTable(mentry.getKey().toString(), mentry.getValue().toString());
+   		 	DDBH.putCategoryToTable(mentry.getKey().toString(), mentry.getValue().toString());
 
             }
          }
@@ -323,10 +325,9 @@ static Scanner sc = new Scanner(System.in);
 	 }
 	 
 	 
-	    public static void testDynamoDB()
+	    public static void testItemsDynamoDB()
 	    {
-	        /* Read the name from command args */
-	        String table_name = "Table";
+	        String table_name = "ItemsTable";
 	        String region = new String("us-east-2");
 	        ProfileCredentialsProvider credentialsProvider;
 	        String ItemName = "VODKA";
@@ -353,6 +354,89 @@ static Scanner sc = new Scanner(System.in);
 	   	 	DDBH.deleteTable();
 	   	 
 	   	 
+	    }
+	    
+	    
+	    public static void testCategoryDynamoDB()
+	    {
+	        String table_name = "CategoryTable";
+	        String region = new String("us-east-2");
+	        ProfileCredentialsProvider credentialsProvider;
+	        String category = "category";
+	        String items = "items";
+	        
+	        String key = "Alcohol";
+	        String value = "Vodka, whiskey";
+	        
+	   		
+	   	 // Read Credentials
+	   	 	credentialsProvider = readCredentials();
+	   	 	
+	   	 	DynamoDBHandler DDBH = new DynamoDBHandler(region, table_name, credentialsProvider,category,items);
+	   	 	
+	   	 	System.out.println("put Alcohol with Vodka, whiskey in table");
+	   	 	DDBH.putCategoryToTable(key, value);
+	   	 	
+	   	 	value = "Vodka, whiskey, arak";
+	   	 	System.out.println("put Alcohol with Vodka, whiskey, arak in table");
+	   	 	DDBH.putCategoryToTable(key, value);
+	   	 	
+	   	 	value = "Vodka"; // check
+	   	 	value = DDBH.retrieveItemString(key);
+	   	 	System.out.println("In " + key + " we have " + value);
+	   	 	
+	   	 	DDBH.deleteItem(key);
+	   	 	
+	   	 	DDBH.deleteTable();
+	   	 
+	   	 
+	    }
+	    
+	    
+	    public static void testOrderDynamoDB()
+	    {
+	        String table_name = "orderTable";
+	        String region = new String("us-east-2");
+	        ProfileCredentialsProvider credentialsProvider;
+	        
+	        String orderId = "orderId";
+	        String orderContent = "orderContent";
+	        String orderStatus = "status";
+	        
+	        
+	        String ID = "AlonTryID";
+	        String orderContentValue = "Vodka 10, whiskey 2";
+	        String orderStatusValue = "In preparation";	 
+	        
+		   	 // Read Credentials
+	   	 	credentialsProvider = readCredentials();
+	   	 	
+	        DynamoDBHandler DDBH = new DynamoDBHandler(region, table_name, credentialsProvider
+	        		,orderId,orderContent,orderStatus);
+	        
+	   	 	System.out.println("Put new order with id = " + ID + " and orderContentValue " + 
+	   	 			orderContentValue + " and status " +  orderStatusValue);
+	        DDBH.putOrderToTable(ID, orderContentValue, orderStatusValue);
+	        
+	        
+	        System.out.println("get order Content with ID " + ID);
+	        orderContentValue = DDBH.retrieveItemString(ID);
+	        System.out.println(orderContentValue);
+	        
+	        orderStatusValue = "complete";
+	        System.out.println("set new order Status ");
+	        DDBH.putOrderToTable(ID, orderContentValue, orderStatusValue);
+	        
+	        
+	        System.out.println("order Status is ");
+	        orderStatusValue = "";
+	        orderStatusValue = DDBH.retrieveItemStatus(ID);
+	        System.out.println("order Status " + orderStatusValue);
+	        
+	   	 	DDBH.deleteItem(ID);
+	   	 	
+	   	 	DDBH.deleteTable();
+	        
 	    }
 	    
 	 
