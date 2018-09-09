@@ -158,6 +158,24 @@ public class DynamoDBHandler {
     
 	}
 	
+	//Put a new item with the Amount on the dynamodb table
+	//If the name already exists then its values are overridden by the new ones
+	public String retrieveItemString(String key)
+	{
+		    Table table = dynamoDB.getTable(table_name);
+		    String value = null;
+		    try {
+
+		        Item item = table.getItem(colKey, key, colVal, null);
+		        value = item.get(colVal).toString();
+		    }
+		    catch (Exception e) {
+		        System.err.println("GetItem failed.");
+		        System.err.println(e.getMessage());
+		    }
+		    return value;
+		}
+	
 	
 	public void deleteItem(String ItemName) 
 	{
@@ -197,7 +215,6 @@ public class DynamoDBHandler {
 	    }
 	    
 	    return Amount;
-	    
 
 	}
 	
