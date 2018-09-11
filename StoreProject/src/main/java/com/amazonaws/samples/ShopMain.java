@@ -22,74 +22,158 @@ public class ShopMain {
 	static ProfileCredentialsProvider credentialsProvider = readCredentials();
 
 	public static void main(String[] args) {
-		initShop();
-		Shop();
+		workingShop();
+	}
 
+	private static void workingShop() {
+		int choise = 1;
+
+		System.out.println("wellcome to store program");
+		System.out.println("-------------------------------");
+		System.out.println("1) add products to shop inventory");
+		System.out.println("2) start prepare orders");
+		System.out.println("enter your choise:");
+
+		try {
+			choise = sc.nextInt();
+
+			if (choise == 1) {
+				addProductsToShopInventory();
+				System.out.println("shop Inventory ready");
+			} else if (choise == 2) {
+
+				Shop();
+				System.out.println("shop exit");
+			} else {
+				System.out.println("it's not 1 or 2");
+			}
+		} catch (Exception e) {
+			System.out.println("Exception it's not 1 or 2");
+		}
+	}
+
+	private static void addProductsToShopInventory() {
+		DynamoDBHandler shopInventory = connectToShopInventory();
+		ArrayList<Product> Products = new ArrayList<Product>();
+		// [0] name [1] amount
+		String[] newProduct = new String[2];
+		int numOfProducts = 0;
+		System.out.println("how much products do you want to add the inventory? (numvber > 0)");
+		try {
+			numOfProducts = sc.nextInt();
+			if (numOfProducts > 0) {
+				for (int i = 0; i < numOfProducts; i++) {
+
+					System.out.println("enter product name");
+					newProduct[0] = sc.nextLine();
+					System.out.println("enter product amount");
+					newProduct[1] = sc.nextLine();
+					Products.add(CheckProductString(newProduct));
+				}
+			} else {
+				System.out.println("num Of Products not valid must > 0 ");
+			}
+		} catch (Exception e) {
+			System.out.println("Exception it's not number");
+		}
+		for (Product p : Products) {
+			int currentAmount = shopInventory.retrieveItemAmount(p.getName());
+			shopInventory.putItem(p.getName(), p.getAmount() + currentAmount);
+		}
 	}
 
 	private static void Shop() {
-		String orderId = null;
-		String orderContent = null;
+		int continueWork = 1;
+		while (continueWork == 1) {
+			String orderId = null;
+			String orderContent = null;
+			String newStatusOrder = null;
+			ArrayList<Product> orderProducts = new ArrayList<Product>();
 
-		ArrayList<Product> orderProducts = new ArrayList<Product>();
+			// Create array of shops Inventory
+			DynamoDBHandler shopInventory = connectToShopInventory();
+			DynamoDBHandler order_table = connectToOrderTable();
 
-		// Create array of shops Inventory
-		DynamoDBHandler shopInventory = connectToShopInventory();
-		DynamoDBHandler order_table = connectToOrderTable();
+			// Connect to queue Shortage
+			SQSHandler sqsShortageHandler = new SQSHandler(credentialsProvider, region, queueMissName);
+			SQSHandler sqsOrderHandler = new SQSHandler(credentialsProvider, region, queueOrderName);
 
-		// Connect to queue Shortage
-		SQSHandler sqsShortageHandler = new SQSHandler(credentialsProvider, region, queueMissName);
-		SQSHandler sqsOrderHandler = new SQSHandler(credentialsProvider, region, queueOrderName);
+			// Get message
+			orderId = getMessage(sqsOrderHandler);
+			orderContent = order_table.retrieveItemString(orderId);
 
-		// Get message
-		orderId = getMessage(sqsOrderHandler);
-		orderContent = order_table.retrieveItemString(orderId);
+			// order format "nameItem quantity,nameItem quantity,..."
 
-		// order format "nameItem quantity,nameItem quantity,..."
+			// get products from orderContent
+			splitOrderMessage(orderContent, orderProducts);
 
-		// get products from orderContent
-		splitOrderMessage(orderContent, orderProducts);
-		
-		//get items order from inventory
-		PrepareOrder(shopInventory,orderProducts,sqsShortageHandler);
-		
-		if (orderProducts.size() > 0) {
-			orderProducts.clear();
+			// get items order from inventory
+			newStatusOrder = PrepareOrder(shopInventory, orderProducts, sqsShortageHandler);
+
+			// update status
+			order_table.putOrderToTable(orderId, orderContent, newStatusOrder);
+
+			if (orderProducts.size() > 0) {
+				orderProducts.clear();
+			}
+			continueWork = continuePrepareOrder();
 		}
-
-		//deleteAll(shopInventory, sqsShortageHandler);
-
 	}
 
-	private static void PrepareOrder(DynamoDBHandler shopInventory, ArrayList<Product> orderProducts,SQSHandler sqsShortageHandler) {
-		String shortageMessege = shopId+",";
-		int currentAmount = 0;
-		for(int i=0;i < orderProducts.size();i++) {
-			int orderAmount=orderProducts.get(i).getAmount();
-			String nameProduct= orderProducts.get(i).getName();
-			
-			currentAmount= shopInventory.retrieveItemAmount(nameProduct);
-			if(orderAmount<currentAmount) {
-				currentAmount-=orderAmount;
-				shopInventory.putItem(nameProduct, orderAmount);
+	private static int continuePrepareOrder() {
+		int val = -1;
+		System.out.println("continue PrepareOrder:");
+		System.out.println("1) yes");
+		System.out.println("0) no");
+		while (val < 0 || val > 1) {
+			try {
+				val = sc.nextInt();
+
+				if (val == 1 || val == 0) {
+					return val;
+				} else {
+					System.out.println("it's not 1 or 0");
+				}
+			} catch (Exception e) {
+				System.out.println("Exception it's not 1 or 0");
 			}
-			else {
-				//Example message
-				//String message = "0,vodka 5,XL 5,beer 12,";
-				shortageMessege+=nameProduct+" "+currentAmount+",";
-			}	
 		}
-		if(shortageMessege.compareTo("0,")==0)
-			sqsShortageHandler.SendMessage(shortageMessege);
-		
-		
+		return -1;
+	}
+
+	private static String PrepareOrder(DynamoDBHandler shopInventory, ArrayList<Product> orderProducts,
+			SQSHandler sqsShortageHandler) {
+		String startOfShortageMessege = shopId + ",";
+		String shortageMessege = "";
+
+		int currentAmount = 0;
+		for (int i = 0; i < orderProducts.size(); i++) {
+			int orderAmount = orderProducts.get(i).getAmount();
+			String nameProduct = orderProducts.get(i).getName();
+
+			currentAmount = shopInventory.retrieveItemAmount(nameProduct);
+			if (orderAmount < currentAmount) {
+				currentAmount -= orderAmount;
+				shopInventory.putItem(nameProduct, orderAmount);
+			} else {
+				// Example message
+				// String message = "0,vodka 5,XL 5,beer 12,";
+				shortageMessege += nameProduct + " " + currentAmount + ",";
+			}
+		}
+		if (shortageMessege.compareTo("") != 0) {
+			sqsShortageHandler.SendMessage(startOfShortageMessege + shortageMessege);
+			return "miss: " + shortageMessege;
+		} else
+			return "finish";
 	}
 
 	private static DynamoDBHandler connectToOrderTable() {
 		String orderId = "orderId";
 		String orderContent = "orderContent";
+		String orderStatus = "status";
 		DynamoDBHandler OrderTable = new DynamoDBHandler(region, order_table_name, credentialsProvider, orderId,
-				orderContent);
+				orderContent, orderStatus);
 
 		return OrderTable;
 	}
@@ -104,7 +188,7 @@ public class ShopMain {
 		return shopsInventory;
 	}
 
-	public static String getMessage(SQSHandler sqsShortageHandler) {
+	public static String getMessage(SQSHandler sqs) {
 		// Example message
 		// String message = "0,vodka 5,XL 5,beer 12,";
 		String Stringmessage = "";
@@ -112,24 +196,23 @@ public class ShopMain {
 
 		System.out.println("wait for message");
 		while (message == null) {
-			message = sqsShortageHandler.ReceiveMessages();
+			message = sqs.ReceiveMessages();
 		}
 		System.out.println("got message");
 
 		Stringmessage = message.getBody();
 
-		sqsShortageHandler.DeleteMessage(message);
+		sqs.DeleteMessage(message);
 
 		return Stringmessage;
 	}
 
 	public static void splitOrderMessage(String message, ArrayList<Product> products) {
 		int i;
-		Product product = null;
-
 		String[] productList = message.split(",");
 
 		for (i = 0; i < productList.length; i++) {
+			Product product = null;
 			String[] SplitProductBySpace = productList[i].split(" ");
 			product = CheckProductString(SplitProductBySpace);
 			if (product != null) {
@@ -169,28 +252,6 @@ public class ShopMain {
 					+ "location (C:\\Users\\BorisM\\.aws\\credentials), and is in valid format.", e);
 		}
 		return credentialsProvider;
-	}
-
-	public static void AddProductsToShop(int shopNumber, ArrayList<Product> products,
-			DynamoDBHandler[] shopsInventory) {
-		int i;
-		int numberOfExtraProducts = 100;
-
-		for (i = 0; i < products.size(); i++) {
-			shopsInventory[shopNumber].putItem(products.get(i).getName(),
-					numberOfExtraProducts + products.get(i).getAmount());
-		}
-
-	}
-
-	public static void deleteAll(DynamoDBHandler[] shopsInventory, SQSHandler sqsShortageHandler) {
-		int i;
-		sqsShortageHandler.DeleteQueue();
-
-		for (i = 0; i < NumberOfshops; i++) {
-			shopsInventory[i].deleteTable();
-		}
-
 	}
 
 }
