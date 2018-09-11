@@ -35,7 +35,7 @@ public class ShopMain {
 		System.out.println("enter your choise:");
 
 		try {
-			choise = sc.nextInt();
+			choise =  Integer.parseInt(sc.nextLine());
 
 			if (choise == 1) {
 				addProductsToShopInventory();
@@ -58,12 +58,12 @@ public class ShopMain {
 		// [0] name [1] amount
 		String[] newProduct = new String[2];
 		int numOfProducts = 0;
-		System.out.println("how much products do you want to add the inventory? (numvber > 0)");
+		System.out.println("how much products do you want to add the inventory? (number > 0)");
 		try {
 			numOfProducts = sc.nextInt();
 			if (numOfProducts > 0) {
 				for (int i = 0; i < numOfProducts; i++) {
-
+					sc.nextLine();
 					System.out.println("enter product name");
 					newProduct[0] = sc.nextLine();
 					System.out.println("enter product amount");

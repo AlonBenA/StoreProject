@@ -61,7 +61,7 @@ static Scanner sc = new Scanner(System.in);
 
 	public static void main(String[] args) {
 			
-		testOrderDynamoDB();
+		store();
 		
 	}
 	
@@ -163,10 +163,10 @@ static Scanner sc = new Scanner(System.in);
 	 {
 		 	int i;
 	        DynamoDBHandler DDBH;
-	        DDBH = new DynamoDBHandler(region, order_table_name, credentialsProvider,orderId,orderContent);
+	        DDBH = new DynamoDBHandler(region, order_table_name, credentialsProvider,orderId,orderContent,orderStatus);
 	        DDBH = new DynamoDBHandler(region, items_table_name, credentialsProvider,category,items);
 
-	        for(i=0 ; i<NumberOfshops ; i++)
+	        for(i=1 ; i<=NumberOfshops ; i++)
 	        {
 	        	DDBH = new DynamoDBHandler(region, table_name+i, credentialsProvider,itemName,amount);
 	        }
@@ -233,13 +233,13 @@ static Scanner sc = new Scanner(System.in);
 	        sqsHandler.DeleteQueue();
 	        sqsHandler2.DeleteQueue();
 	        
-	        DDBH = new DynamoDBHandler(region, order_table_name, credentialsProvider,orderId,orderContent);
+	        DDBH = new DynamoDBHandler(region, order_table_name, credentialsProvider,orderId,orderContent,orderStatus);
 	        DDBH.deleteTable();
 
 	        DDBH = new DynamoDBHandler(region, items_table_name, credentialsProvider,category,items);
 	        DDBH.deleteTable();
 
-	        for(i=0 ; i<NumberOfshops ; i++)
+	        for(i=1 ; i<=NumberOfshops ; i++)
 	        {
 	        DDBH = new DynamoDBHandler(region, table_name+i, credentialsProvider,itemName,amount);
 	        DDBH.deleteTable();
