@@ -101,9 +101,8 @@ public class ShopMain {
 			// Get message
 			orderId = getMessage(sqsOrderHandler);
 			orderContent = order_table.retrieveItemString(orderId);
-
 			// order format "nameItem quantity,nameItem quantity,..."
-
+			
 			// get products from orderContent
 			splitOrderMessage(orderContent, orderProducts);
 
@@ -112,7 +111,7 @@ public class ShopMain {
 
 			// update status
 			order_table.putOrderToTable(orderId, orderContent, newStatusOrder);
-
+			
 			if (orderProducts.size() > 0) {
 				orderProducts.clear();
 			}
@@ -152,9 +151,9 @@ public class ShopMain {
 			String nameProduct = orderProducts.get(i).getName();
 
 			currentAmount = shopInventory.retrieveItemAmount(nameProduct);
-			if (orderAmount < currentAmount) {
+			if (orderAmount <= currentAmount) {
 				currentAmount -= orderAmount;
-				shopInventory.putItem(nameProduct, orderAmount);
+				shopInventory.putItem(nameProduct, currentAmount);
 			} else {
 				// Example message
 				// String message = "0,vodka 5,XL 5,beer 12,";
