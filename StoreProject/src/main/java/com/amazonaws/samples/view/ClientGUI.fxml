@@ -20,7 +20,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.amazonaws.samples.view.Controller">
+<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.amazonaws.samples.view.Controller">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -73,10 +73,10 @@
                 <Color blue="0.624" green="0.624" red="0.624" fx:id="x2" />
               </textFill>
             </Label>
-                  <ComboBox fx:id="categories" layoutX="36.0" layoutY="104.0" prefWidth="150.0" />
-                  <ComboBox fx:id="products" layoutX="36.0" layoutY="169.0" onAction="#categoriesChoice" prefWidth="150.0" />
+                  <ComboBox fx:id="categoriesBox" layoutX="36.0" layoutY="104.0" onAction="#categoriesChoice" prefWidth="150.0" promptText="Categories" />
+                  <ComboBox fx:id="productsBox" layoutX="36.0" layoutY="169.0" prefWidth="150.0" promptText="Products" />
                   <Button layoutX="37.0" layoutY="292.0" mnemonicParsing="false" onAction="#add" text="Add" />
-                  <TextField fx:id="qnt" layoutX="37.0" layoutY="233.0" promptText="Quantity" />
+                  <TextField fx:id="qntField" layoutX="37.0" layoutY="233.0" promptText="Quantity" />
           </children>
         </AnchorPane>
         <ScrollPane prefHeight="-1.0" prefWidth="-1.0">

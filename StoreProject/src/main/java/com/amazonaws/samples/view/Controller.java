@@ -52,6 +52,7 @@ public class Controller {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error!");
 			alert.setContentText("Quantity must be an integer! jerk off");
+			alert.showAndWait();
 		}
 	}
 	
