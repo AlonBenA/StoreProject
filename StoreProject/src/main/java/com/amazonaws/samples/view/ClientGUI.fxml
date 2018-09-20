@@ -11,6 +11,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -19,7 +20,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.amazonaws.samples.view.Controller">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
@@ -64,7 +65,7 @@
       <items>
         <AnchorPane>
           <children>
-            <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Master" textAlignment="CENTER" wrapText="false">
+            <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Choose Products" textAlignment="CENTER" wrapText="false">
               <font>
                 <Font size="18.0" fx:id="x1" />
               </font>
@@ -72,9 +73,10 @@
                 <Color blue="0.624" green="0.624" red="0.624" fx:id="x2" />
               </textFill>
             </Label>
-                  <ComboBox layoutX="36.0" layoutY="104.0" prefWidth="150.0" />
-                  <ComboBox layoutX="36.0" layoutY="186.0" prefWidth="150.0" />
-                  <Button layoutX="36.0" layoutY="276.0" mnemonicParsing="false" text="Button" />
+                  <ComboBox fx:id="categories" layoutX="36.0" layoutY="104.0" prefWidth="150.0" />
+                  <ComboBox fx:id="products" layoutX="36.0" layoutY="169.0" onAction="#categoriesChoice" prefWidth="150.0" />
+                  <Button layoutX="37.0" layoutY="292.0" mnemonicParsing="false" onAction="#add" text="Add" />
+                  <TextField fx:id="qnt" layoutX="37.0" layoutY="233.0" promptText="Quantity" />
           </children>
         </AnchorPane>
         <ScrollPane prefHeight="-1.0" prefWidth="-1.0">
@@ -91,7 +93,8 @@
           <children>
             <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="Details" textAlignment="CENTER" textFill="$x2" wrapText="false" />
                   <ListView layoutX="11.0" layoutY="76.0" prefHeight="317.0" prefWidth="200.0" />
-                  <Button layoutX="15.0" layoutY="432.0" mnemonicParsing="false" text="Button" />
+                  <Button layoutX="15.0" layoutY="432.0" mnemonicParsing="false" onAction="#buy" text="Buy" />
+                  <Button layoutX="85.0" layoutY="432.0" mnemonicParsing="false" onAction="#delete" text="Delete" />
           </children>
         </AnchorPane>
       </items>
