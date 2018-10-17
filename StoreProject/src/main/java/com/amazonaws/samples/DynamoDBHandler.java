@@ -59,7 +59,7 @@ public class DynamoDBHandler {
 	private void initTable(ProfileCredentialsProvider credentialsProvider)
 	{
 		ddb = AmazonDynamoDBClientBuilder.standard()
-	    		 .withCredentials(credentialsProvider)
+	//    		 .withCredentials(credentialsProvider)
 	             .withRegion(region)
 	             .build();	
 		
@@ -203,7 +203,6 @@ public class DynamoDBHandler {
 		    String value = "";
 		    
 		    try {
-		    	
 		        Item item = table.getItem(colKey,key);
 		        value = item.getString(colVal);
 		    }

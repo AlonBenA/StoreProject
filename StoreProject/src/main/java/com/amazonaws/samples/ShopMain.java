@@ -8,7 +8,7 @@ import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.sqs.model.Message;
 
 public class ShopMain {
-	static String shopId = "1";
+	static String shopId;
 
 	static String queueMissName = new String("queueShortage");
 	static String queueOrderName = new String("queueOrder");
@@ -30,6 +30,8 @@ public class ShopMain {
 
 		System.out.println("wellcome to store program");
 		System.out.println("-------------------------------");
+		System.out.println("please enter your shopID:");
+		shopId=sc.nextLine();
 		System.out.println("1) add products to shop inventory");
 		System.out.println("2) start prepare orders");
 		System.out.println("enter your choise:");

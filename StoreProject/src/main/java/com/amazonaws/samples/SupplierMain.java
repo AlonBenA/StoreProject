@@ -64,7 +64,7 @@ public class SupplierMain {
 		
 		
 		
-		 deleteAll(shopsInventory,sqsShortageHandler);
+		//deleteAll(shopsInventory,sqsShortageHandler);
 	}
 	
 	public static DynamoDBHandler[] connectToShopsInventory()
@@ -75,7 +75,7 @@ public class SupplierMain {
 
 		DynamoDBHandler[] shopsInventory = new DynamoDBHandler[2];
 		
-        for(i=0; i< NumberOfshops ; i++)
+        for(i=1; i<= NumberOfshops ; i++)
         {
         	shopsInventory[i] = new DynamoDBHandler(region, table_name+i, credentialsProvider,itemName,amount);
         }

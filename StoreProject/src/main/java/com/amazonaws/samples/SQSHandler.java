@@ -43,7 +43,7 @@ public class SQSHandler {
 	private void init(ProfileCredentialsProvider credentialsProvider)
 	{
 		sqs = AmazonSQSClientBuilder.standard()
-                .withCredentials(credentialsProvider)
+       //         .withCredentials(credentialsProvider)
                 .withRegion(region)
                 .build();
 		

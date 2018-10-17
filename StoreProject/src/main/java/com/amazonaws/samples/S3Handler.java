@@ -35,7 +35,7 @@ public class S3Handler {
 		
 		
 		  s3 = AmazonS3ClientBuilder.standard()
-		            .withCredentials(new AWSStaticCredentialsProvider(credentials))
+		  //          .withCredentials(new AWSStaticCredentialsProvider(credentials))
 		            .withRegion(region)
 		            .build();
 		  
