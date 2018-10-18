@@ -86,7 +86,7 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
 		
 		
 		try {
-			choise= sc.nextInt();
+			choise= Integer.valueOf(sc.nextLine());
 						
 			
 			if(choise == 1)
@@ -131,7 +131,7 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
 	            
 	            while(NumberOfshops < 1)
 	            {
-	            	NumberOfshops= sc.nextInt();
+	            	NumberOfshops=Integer.valueOf(sc.nextLine());
 	            }
 	            
 	        } catch (Exception e) {
@@ -305,7 +305,7 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
             
             while(NumberOfshops < 1)
             {
-            	NumberOfshops= sc.nextInt();
+            	NumberOfshops= Integer.valueOf(sc.nextLine());
             }
             
         }catch (InputMismatchException  e) {
@@ -343,7 +343,7 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
 		
 		
 		try {
-			number= sc.nextInt();
+			number= Integer.valueOf(sc.nextLine());
 						
 		}catch(Exception e)
 		{

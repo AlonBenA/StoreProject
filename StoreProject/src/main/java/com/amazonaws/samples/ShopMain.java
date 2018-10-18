@@ -9,7 +9,7 @@ import com.amazonaws.services.sqs.model.Message;
 
 public class ShopMain {
 	static String shopId;
-
+	
 	static String queueMissName = new String("queueShortage");
 	static String queueOrderName = new String("queueOrder");
 
@@ -24,7 +24,7 @@ public class ShopMain {
 	public static void main(String[] args) {
 		workingShop();
 	}
-
+	
 	private static void workingShop() {
 		int choise = 1;
 
@@ -37,7 +37,7 @@ public class ShopMain {
 		System.out.println("enter your choise:");
 
 		try {
-			choise =  Integer.parseInt(sc.nextLine());
+			choise =  Integer.valueOf(sc.nextLine());
 
 			if (choise == 1) {
 				addProductsToShopInventory();
@@ -53,7 +53,8 @@ public class ShopMain {
 			System.out.println("Exception it's not 1 or 2");
 		}
 	}
-
+	
+	//add Products To Shop Inventory 
 	private static void addProductsToShopInventory() {
 		DynamoDBHandler shopInventory = connectToShopInventory();
 		ArrayList<Product> Products = new ArrayList<Product>();
@@ -62,10 +63,9 @@ public class ShopMain {
 		int numOfProducts = 0;
 		System.out.println("how much products do you want to add the inventory? (number > 0)");
 		try {
-			numOfProducts = sc.nextInt();
+			numOfProducts = Integer.valueOf(sc.nextLine());
 			if (numOfProducts > 0) {
 				for (int i = 0; i < numOfProducts; i++) {
-					sc.nextLine();
 					System.out.println("enter product name");
 					newProduct[0] = sc.nextLine();
 					System.out.println("enter product amount");
@@ -83,7 +83,8 @@ public class ShopMain {
 			shopInventory.putItem(p.getName(), p.getAmount() + currentAmount);
 		}
 	}
-
+	
+	//Prepare to get another order from sqs order id
 	private static void Shop() {
 		int continueWork = 1;
 		while (continueWork == 1) {
@@ -92,7 +93,7 @@ public class ShopMain {
 			String newStatusOrder = null;
 			ArrayList<Product> orderProducts = new ArrayList<Product>();
 
-			// Create array of shops Inventory
+			// connect to shops Inventory and order table
 			DynamoDBHandler shopInventory = connectToShopInventory();
 			DynamoDBHandler order_table = connectToOrderTable();
 
@@ -120,15 +121,15 @@ public class ShopMain {
 			continueWork = continuePrepareOrder();
 		}
 	}
-
+	//Prepare another order?
 	private static int continuePrepareOrder() {
 		int val = -1;
-		System.out.println("continue PrepareOrder:");
+		System.out.println("Prepare another Order:");
 		System.out.println("1) yes");
 		System.out.println("0) no");
 		while (val < 0 || val > 1) {
 			try {
-				val = sc.nextInt();
+				val = Integer.valueOf(sc.nextLine());
 
 				if (val == 1 || val == 0) {
 					return val;
@@ -188,10 +189,8 @@ public class ShopMain {
 
 		return shopsInventory;
 	}
-
+	//Getting a new message- orderid
 	public static String getMessage(SQSHandler sqs) {
-		// Example message
-		// String message = "0,vodka 5,XL 5,beer 12,";
 		String Stringmessage = "";
 		Message message = null;
 
@@ -207,7 +206,8 @@ public class ShopMain {
 
 		return Stringmessage;
 	}
-
+	
+	//spliit the message from the store to products and return the shop id
 	public static void splitOrderMessage(String message, ArrayList<Product> products) {
 		int i;
 		String[] productList = message.split(",");
@@ -221,7 +221,7 @@ public class ShopMain {
 			}
 		}
 	}
-
+    // Check if the number that is ask from the store is a number and not negative 
 	public static Product CheckProductString(String[] productString) {
 		Product product = null;
 		int amount = -1;
@@ -231,10 +231,12 @@ public class ShopMain {
 
 		} catch (Exception e) {
 			System.out.println("Not a number");
+			amount = -1;
+
 		}
 
 		if (amount < 0) {
-
+			
 		} else {
 			product = new Product(productString[0], amount);
 		}
