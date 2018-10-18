@@ -176,7 +176,6 @@ public class SQSHandler {
 	
 	
 	//Delete a message from SQS
-	
 	public void DeleteMessage(Message message)
 	{		
         try {
