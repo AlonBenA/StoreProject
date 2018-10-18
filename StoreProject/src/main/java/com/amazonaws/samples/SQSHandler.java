@@ -207,7 +207,7 @@ public class SQSHandler {
          
 	}
 	
-	//Delete a Queue
+	//Delete a Queue from AWS
 	public void DeleteQueue()
 	{		
         try {
