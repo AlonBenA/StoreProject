@@ -61,15 +61,9 @@ public class SupplierMain {
 				products.clear();
 			}
 
-		
-<<<<<<< HEAD
-=======
-		
-		
-		//deleteAll(shopsInventory,sqsShortageHandler);
->>>>>>> branch 'master' of https://github.com/AlonBenA/StoreProject.git
 	}
 	
+	//Connects to the store database
 	public static DynamoDBHandler[] connectToShopsInventory()
 	{
 		int i;
@@ -86,7 +80,7 @@ public class SupplierMain {
 		return shopsInventory;
 	}
 	
-	
+	//Getting a new message about store shortage
 	public static String getMessage(SQSHandler sqsShortageHandler)
 	{
 		//Example message
@@ -108,6 +102,7 @@ public class SupplierMain {
 		return Stringmessage;
 	}
 	
+	//spliit the message from the store to products and return the shop id
     public static int spliitShortageMessage(String message,ArrayList<Product> products)
     {
     	int i;
@@ -136,7 +131,7 @@ public class SupplierMain {
     }
     
     
-    
+    // Check if string is number
 	public static int CheckNumber(String stringNumber)
 	{
 		int number = -1;
@@ -154,6 +149,7 @@ public class SupplierMain {
 		return number;
 	}
 	
+    // Check if the number that is ask from the store is a number and not negative 
 	public static Product CheckProductString(String[] productString)
 	{
 		Product product = null;
@@ -166,9 +162,10 @@ public class SupplierMain {
 		}catch(Exception e)
 		{
 			System.out.println("Not a number");
+			amount = -1;
 		}
 		
-		if(amount == -1 || amount < 0)
+		if(amount < 0)
 		{
 			
 		}
@@ -180,7 +177,7 @@ public class SupplierMain {
 		return product;
 	}
 	
-	
+	//check if the shop id is one of the shops Correct
 	public static int CheckNumberOfShop(int number)
 	{
 		
@@ -209,6 +206,7 @@ public class SupplierMain {
         return credentialsProvider;
     }
     
+    //added the missing Amount + 100 of item to the shop database 
     public static void AddProductsToShop(int shopNumber,ArrayList<Product> products,DynamoDBHandler[] shopsInventory)
     {
     	int i;

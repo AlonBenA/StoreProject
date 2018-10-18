@@ -59,11 +59,7 @@ public class DynamoDBHandler {
 	private void initTable(ProfileCredentialsProvider credentialsProvider)
 	{
 		ddb = AmazonDynamoDBClientBuilder.standard()
-<<<<<<< HEAD
-	    //		 .withCredentials(credentialsProvider)
-=======
-	//    		 .withCredentials(credentialsProvider)
->>>>>>> branch 'master' of https://github.com/AlonBenA/StoreProject.git
+		//		.withCredentials(credentialsProvider)
 	             .withRegion(region)
 	             .build();	
 		

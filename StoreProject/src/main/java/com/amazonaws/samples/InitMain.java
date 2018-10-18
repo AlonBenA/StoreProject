@@ -278,27 +278,6 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
         return credentialsProvider;
     }
 	
-<<<<<<< HEAD
-	
-=======
-    private static File createSampleFile() throws IOException {
-        File file = File.createTempFile("aws-java-sdk-", ".txt");
-        file.deleteOnExit();
->>>>>>> branch 'master' of https://github.com/AlonBenA/StoreProject.git
-
-<<<<<<< HEAD
-=======
-        Writer writer = new OutputStreamWriter(new FileOutputStream(file));
-        writer.write("abcdefghijklmnopqrstuvwxyz\n");
-        writer.write("01234567890112345678901234\n");
-        writer.write("!@#$%^&*()-=[]{};':',.<>/?\n");
-        writer.write("01234567890112345678901234\n");
-        writer.write("abcdefghijklmnopqrstuvwxyz\n");
-        writer.close();
-
-        return file;
-    }
-	
     private static File createCategoryFile() throws IOException {
     	
     	int i;
@@ -316,39 +295,7 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
 
         return file;
     }
-
-    /**
-     * Displays the contents of the specified input stream as text.
-     *
-     * @param input
-     *            The input stream to display as text.
-     *
-     * @throws IOException
-     */
-    private static void displayTextInputStream(InputStream input) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-        while (true) {
-            String line = reader.readLine();
-            if (line == null) break;
-
-            System.out.println("    " + line);
-        }
-        System.out.println();
-    }
 	
-
-    public static void displayMessage(Message message) {
-
-        System.out.println("Message");
-        System.out.println("    MessageId:     " + message.getMessageId());
-        System.out.println("    Body:          " + message.getBody());
-        for (Entry<String, String> entry : message.getAttributes().entrySet()) {
-            System.out.println("  Attribute");
-            System.out.println("    Name:  " + entry.getKey());
-            System.out.println("    Value: " + entry.getValue());
-        }
-    }
->>>>>>> branch 'master' of https://github.com/AlonBenA/StoreProject.git
     
     public static void getNumberOfStores()
     {
