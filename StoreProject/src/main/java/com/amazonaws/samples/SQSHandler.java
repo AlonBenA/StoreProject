@@ -43,7 +43,7 @@ public class SQSHandler {
 	private void init(ProfileCredentialsProvider credentialsProvider)
 	{
 		sqs = AmazonSQSClientBuilder.standard()
-                .withCredentials(credentialsProvider)
+  //              .withCredentials(credentialsProvider)
                 .withRegion(region)
                 .build();
 		
@@ -107,7 +107,7 @@ public class SQSHandler {
         }
     }
 	
-	
+	//upload a new message to SQS
 	public void SendMessage(String message)
 	{
         
@@ -135,7 +135,7 @@ public class SQSHandler {
          
 	}
 	
-	
+	//Receive a new message from SQS
 	public Message ReceiveMessages()
 	{
 		ReceiveMessageResult result;
@@ -175,6 +175,7 @@ public class SQSHandler {
 	}
 	
 	
+	//Delete a message from SQS
 	
 	public void DeleteMessage(Message message)
 	{		
@@ -206,7 +207,7 @@ public class SQSHandler {
          
 	}
 	
-	
+	//Delete a Queue
 	public void DeleteQueue()
 	{		
         try {

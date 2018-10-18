@@ -62,9 +62,6 @@ public class SupplierMain {
 			}
 
 		
-		
-		
-		 deleteAll(shopsInventory,sqsShortageHandler);
 	}
 	
 	public static DynamoDBHandler[] connectToShopsInventory()
@@ -218,18 +215,6 @@ public class SupplierMain {
     	}
     	
     	
-    }
-    
-    public static void deleteAll(DynamoDBHandler[] shopsInventory,SQSHandler sqsShortageHandler)
-    {
-    	int i;
-    	sqsShortageHandler.DeleteQueue();
-    	
-        for(i=0 ; i<NumberOfshops ; i++)
-        {
-        	shopsInventory[i].deleteTable();
-        }    
-        
     }
     
 

@@ -59,7 +59,7 @@ public class DynamoDBHandler {
 	private void initTable(ProfileCredentialsProvider credentialsProvider)
 	{
 		ddb = AmazonDynamoDBClientBuilder.standard()
-	    		 .withCredentials(credentialsProvider)
+	    //		 .withCredentials(credentialsProvider)
 	             .withRegion(region)
 	             .build();	
 		
@@ -79,7 +79,6 @@ public class DynamoDBHandler {
 		}
 
 	}
-	
 	
 	
 	
@@ -195,7 +194,7 @@ public class DynamoDBHandler {
 	}
 	
 	
-
+	// Retrieve the first string column
 	public String retrieveItemString(String key)
 	{
 		    Table table = dynamoDB.getTable(table_name);
@@ -215,7 +214,7 @@ public class DynamoDBHandler {
 		}
 	
 	
-	
+	// Retrieve the second string column(which there is only one possibility and is get the Status of an Order)
 	public String retrieveItemStatus(String key)
 	{
 		    Table table = dynamoDB.getTable(table_name);
@@ -234,7 +233,7 @@ public class DynamoDBHandler {
 		    return value;
 		}
 	
-	
+	//delete a Item from the table by key
 	public void deleteItem(String ItemName) 
 	{
 	    Table table = dynamoDB.getTable(table_name);
@@ -256,7 +255,7 @@ public class DynamoDBHandler {
 	    
 	}
 	
-	
+	// Retrieve the first Int column(which there is only one possibility and is get the Amount of item for a store)
 	public int retrieveItemAmount(String ItemName) {
 	    Table table = dynamoDB.getTable(table_name);
 	    int Amount = 0;

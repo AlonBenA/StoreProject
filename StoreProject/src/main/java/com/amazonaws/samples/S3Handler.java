@@ -35,7 +35,7 @@ public class S3Handler {
 		
 		
 		  s3 = AmazonS3ClientBuilder.standard()
-		            .withCredentials(new AWSStaticCredentialsProvider(credentials))
+	//	            .withCredentials(new AWSStaticCredentialsProvider(credentials))
 		            .withRegion(region)
 		            .build();
 		  
@@ -70,7 +70,7 @@ public class S3Handler {
         
 	}
 	
-	
+	//upload a file to the S3
 	public void putFile(File file,String key)
 	{
 		try {
@@ -96,6 +96,7 @@ public class S3Handler {
 	}
 	
 	
+	//get a file from s3
 	public S3Object getItem(String key)
 	{
 		S3Object S3object = null;
@@ -124,6 +125,7 @@ public class S3Handler {
 		
 	}
 	
+	//Delete a file from s3
 	public void DeleteObjectFromBucket(String key)
 	{
 		try {
@@ -148,6 +150,7 @@ public class S3Handler {
         }
 	}
 	
+	//Delete a Bucket from s3
 	public void DeleteBucket()
 	{
 		try {
