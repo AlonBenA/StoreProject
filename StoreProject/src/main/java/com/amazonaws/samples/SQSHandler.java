@@ -43,7 +43,11 @@ public class SQSHandler {
 	private void init(ProfileCredentialsProvider credentialsProvider)
 	{
 		sqs = AmazonSQSClientBuilder.standard()
+<<<<<<< HEAD
   //              .withCredentials(credentialsProvider)
+=======
+       //         .withCredentials(credentialsProvider)
+>>>>>>> branch 'master' of https://github.com/AlonBenA/StoreProject.git
                 .withRegion(region)
                 .build();
 		

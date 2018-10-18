@@ -33,6 +33,10 @@ static int NumberOfshops = 0;
 static String region = "us-east-2";
 static HashMap<String, String> itemCate = new HashMap<String, String>();
 
+//files names
+static String categoryFileName = "categoryList";
+
+
 //bucketPicName 
 static 	String bucketPicName = "afekapicturebucketalonitayoran";
 
@@ -56,8 +60,12 @@ static String itemName = "itemName";
 static String amount = "amount";
 
 static ProfileCredentialsProvider credentialsProvider  = readCredentials(); 
-static Scanner sc = new Scanner(System.in);
-	
+static Scanner sc = new Scanner(System.in); 
+static String categoryArray[] = {"alcohol","drinks"};
+static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};    
+
+
+
 
 	public static void main(String[] args) {
 			
@@ -104,8 +112,13 @@ static Scanner sc = new Scanner(System.in);
 	
 	 public static void initItemsList()
 	 {
-		 itemCate.put("alcohol", "vodka,beer,arak,whiskey,wine,");
-		 itemCate.put("drinks" , "XL,");
+		 int i;
+		 
+		 for(i=0; i<categoryArray.length;i++)
+		 {
+			 itemCate.put(categoryArray[i],categoryItemsArray[i]);
+		 }
+
 	 }
 	 
 	 public static void initStore()
@@ -176,7 +189,6 @@ static Scanner sc = new Scanner(System.in);
 	
 	public static void initpicbucketS3()
 	 {
-
         S3Handler s3Handler = new S3Handler(credentials, region, bucketPicName);
         
         try {
@@ -191,6 +203,8 @@ static Scanner sc = new Scanner(System.in);
     	               s3Handler.putFile(new File(s+".jpg"), s);
                }
             }
+            
+            s3Handler.putFile(createCategoryFile(), categoryFileName);
         					
 		} catch (Exception e) {
 			// 
@@ -226,7 +240,8 @@ static Scanner sc = new Scanner(System.in);
 	            		   s3Handler.DeleteObjectFromBucket(s);
 	            }
 	            }
-	    		    	
+	    		   
+	        s3Handler.DeleteObjectFromBucket(categoryFileName); 
 	    	s3Handler.DeleteBucket();
 	    	
 	        
@@ -263,8 +278,77 @@ static Scanner sc = new Scanner(System.in);
         return credentialsProvider;
     }
 	
+<<<<<<< HEAD
+	
+=======
+    private static File createSampleFile() throws IOException {
+        File file = File.createTempFile("aws-java-sdk-", ".txt");
+        file.deleteOnExit();
+>>>>>>> branch 'master' of https://github.com/AlonBenA/StoreProject.git
+
+<<<<<<< HEAD
+=======
+        Writer writer = new OutputStreamWriter(new FileOutputStream(file));
+        writer.write("abcdefghijklmnopqrstuvwxyz\n");
+        writer.write("01234567890112345678901234\n");
+        writer.write("!@#$%^&*()-=[]{};':',.<>/?\n");
+        writer.write("01234567890112345678901234\n");
+        writer.write("abcdefghijklmnopqrstuvwxyz\n");
+        writer.close();
+
+        return file;
+    }
+	
+    private static File createCategoryFile() throws IOException {
+    	
+    	int i;
+    	
+        File file = File.createTempFile("Category", ".txt");
+        file.deleteOnExit();
+        Writer writer = new OutputStreamWriter(new FileOutputStream(file));
+
+        for(i=0;i<categoryArray.length;i++)
+        {
+        	 writer.write(categoryArray[i]+"\n");
+        }
+        
+        writer.close();
+
+        return file;
+    }
+
+    /**
+     * Displays the contents of the specified input stream as text.
+     *
+     * @param input
+     *            The input stream to display as text.
+     *
+     * @throws IOException
+     */
+    private static void displayTextInputStream(InputStream input) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+        while (true) {
+            String line = reader.readLine();
+            if (line == null) break;
+
+            System.out.println("    " + line);
+        }
+        System.out.println();
+    }
 	
 
+    public static void displayMessage(Message message) {
+
+        System.out.println("Message");
+        System.out.println("    MessageId:     " + message.getMessageId());
+        System.out.println("    Body:          " + message.getBody());
+        for (Entry<String, String> entry : message.getAttributes().entrySet()) {
+            System.out.println("  Attribute");
+            System.out.println("    Name:  " + entry.getKey());
+            System.out.println("    Value: " + entry.getValue());
+        }
+    }
+>>>>>>> branch 'master' of https://github.com/AlonBenA/StoreProject.git
     
     public static void getNumberOfStores()
     {

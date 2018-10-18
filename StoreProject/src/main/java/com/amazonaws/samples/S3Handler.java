@@ -35,7 +35,11 @@ public class S3Handler {
 		
 		
 		  s3 = AmazonS3ClientBuilder.standard()
+<<<<<<< HEAD
 	//	            .withCredentials(new AWSStaticCredentialsProvider(credentials))
+=======
+		  //          .withCredentials(new AWSStaticCredentialsProvider(credentials))
+>>>>>>> branch 'master' of https://github.com/AlonBenA/StoreProject.git
 		            .withRegion(region)
 		            .build();
 		  

@@ -59,7 +59,11 @@ public class DynamoDBHandler {
 	private void initTable(ProfileCredentialsProvider credentialsProvider)
 	{
 		ddb = AmazonDynamoDBClientBuilder.standard()
+<<<<<<< HEAD
 	    //		 .withCredentials(credentialsProvider)
+=======
+	//    		 .withCredentials(credentialsProvider)
+>>>>>>> branch 'master' of https://github.com/AlonBenA/StoreProject.git
 	             .withRegion(region)
 	             .build();	
 		
@@ -202,7 +206,6 @@ public class DynamoDBHandler {
 		    String value = "";
 		    
 		    try {
-		    	
 		        Item item = table.getItem(colKey,key);
 		        value = item.getString(colVal);
 		    }
