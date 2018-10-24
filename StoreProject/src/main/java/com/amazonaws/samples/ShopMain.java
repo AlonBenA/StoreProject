@@ -18,9 +18,8 @@ public class ShopMain {
 
 	static String region = "us-east-2";
 	static Scanner sc = new Scanner(System.in);
-
-	static ProfileCredentialsProvider credentialsProvider = readCredentials();
-
+	
+	
 	public static void main(String[] args) {
 		workingShop();
 	}
@@ -99,8 +98,8 @@ public class ShopMain {
 			DynamoDBHandler order_table = connectToOrderTable();
 
 			// Connect to queue Shortage
-			SQSHandler sqsShortageHandler = new SQSHandler(credentialsProvider, region, queueMissName);
-			SQSHandler sqsOrderHandler = new SQSHandler(credentialsProvider, region, queueOrderName);
+			SQSHandler sqsShortageHandler = new SQSHandler(region, queueMissName);
+			SQSHandler sqsOrderHandler = new SQSHandler( region, queueOrderName);
 
 			// Get message
 			orderId = getMessage(sqsOrderHandler);
@@ -176,7 +175,7 @@ public class ShopMain {
 		String orderId = "orderId";
 		String orderContent = "orderContent";
 		String orderStatus = "status";
-		DynamoDBHandler OrderTable = new DynamoDBHandler(region, order_table_name, credentialsProvider, orderId,
+		DynamoDBHandler OrderTable = new DynamoDBHandler(region, order_table_name, orderId,
 				orderContent, orderStatus);
 
 		return OrderTable;
@@ -186,7 +185,7 @@ public class ShopMain {
 		String itemName = "itemName";
 		String amount = "amount";
 
-		DynamoDBHandler shopsInventory = new DynamoDBHandler(region, table_name + shopId, credentialsProvider, itemName,
+		DynamoDBHandler shopsInventory = new DynamoDBHandler(region, table_name + shopId, itemName,
 				amount);
 
 		return shopsInventory;
@@ -244,19 +243,6 @@ public class ShopMain {
 		}
 
 		return product;
-	}
-
-	public static ProfileCredentialsProvider readCredentials() {
-
-		ProfileCredentialsProvider credentialsProvider = new ProfileCredentialsProvider();
-		try {
-			credentialsProvider.getCredentials();
-		} catch (Exception e) {
-			throw new AmazonClientException("Cannot load the credentials from the credential profiles file. "
-					+ "Please make sure that your credentials file is at the correct "
-					+ "location (C:\\Users\\BorisM\\.aws\\credentials), and is in valid format.", e);
-		}
-		return credentialsProvider;
 	}
 
 }

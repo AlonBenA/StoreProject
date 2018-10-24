@@ -28,7 +28,6 @@ import com.amazonaws.services.s3.model.S3Object;
 public class InitMain {
 	
 	//this class is for initial the infrastructure of the shop in empty aws system
-static AWSCredentials credentials =  new ProfileCredentialsProvider("default").getCredentials();
 static int NumberOfshops = 0;
 static String region = "us-east-2";
 static HashMap<String, String> itemCate = new HashMap<String, String>();
@@ -59,7 +58,6 @@ static String items = "items";
 static String itemName = "itemName";
 static String amount = "amount";
 
-static ProfileCredentialsProvider credentialsProvider  = readCredentials(); 
 static Scanner sc = new Scanner(System.in); 
 static String categoryArray[] = {"alcohol","drinks"};
 static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};    
@@ -153,7 +151,7 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
 	 }
 	
 	 private static void enterItemsNames() {
-		 DynamoDBHandler DDBH = new DynamoDBHandler(region, items_table_name, credentialsProvider,category,items);
+		 DynamoDBHandler DDBH = new DynamoDBHandler(region, items_table_name,category,items);
 
 		 Set set = itemCate.entrySet();
          Iterator iterator = set.iterator();
@@ -168,20 +166,20 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
 	public static void  initSQS()
 	 {
 		//to open new sqs
-	        SQSHandler sqsHandler = new SQSHandler(credentialsProvider, region, queueMissName);
-	        SQSHandler sqsHandler2 = new SQSHandler(credentialsProvider, region, queueOrderName);
+	        SQSHandler sqsHandler = new SQSHandler( region, queueMissName);
+	        SQSHandler sqsHandler2 = new SQSHandler( region, queueOrderName);
 	 }
 	 
 	 public static void  initDynamoDB()
 	 {
 		 	int i;
 	        DynamoDBHandler DDBH;
-	        DDBH = new DynamoDBHandler(region, order_table_name, credentialsProvider,orderId,orderContent,orderStatus);
-	        DDBH = new DynamoDBHandler(region, items_table_name, credentialsProvider,category,items);
+	        DDBH = new DynamoDBHandler(region, order_table_name,orderId,orderContent,orderStatus);
+	        DDBH = new DynamoDBHandler(region, items_table_name,category,items);
 
 	        for(i=1 ; i<=NumberOfshops ; i++)
 	        {
-	        	DDBH = new DynamoDBHandler(region, table_name+i, credentialsProvider,itemName,amount);
+	        	DDBH = new DynamoDBHandler(region, table_name+i,itemName,amount);
 	        }
 
 	 }
@@ -189,7 +187,7 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
 	
 	public static void initpicbucketS3()
 	 {
-        S3Handler s3Handler = new S3Handler(credentials, region, bucketPicName);
+        S3Handler s3Handler = new S3Handler( region, bucketPicName);
         
         try {
         	 /* Display content using Iterator*/
@@ -223,9 +221,9 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
 	        
 	        
 	        	
-	        S3Handler s3Handler = new S3Handler(credentials, region, bucketPicName);
-	        SQSHandler sqsHandler = new SQSHandler(credentialsProvider, region, queueMissName);
-	        SQSHandler sqsHandler2 = new SQSHandler(credentialsProvider, region, queueOrderName);
+	        S3Handler s3Handler = new S3Handler( region, bucketPicName);
+	        SQSHandler sqsHandler = new SQSHandler(region, queueMissName);
+	        SQSHandler sqsHandler2 = new SQSHandler(region, queueOrderName);
 	        
 	        
 			 initItemsList();
@@ -248,35 +246,20 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
 	        sqsHandler.DeleteQueue();
 	        sqsHandler2.DeleteQueue();
 	        
-	        DDBH = new DynamoDBHandler(region, order_table_name, credentialsProvider,orderId,orderContent,orderStatus);
+	        DDBH = new DynamoDBHandler(region, order_table_name,orderId,orderContent,orderStatus);
 	        DDBH.deleteTable();
 
-	        DDBH = new DynamoDBHandler(region, items_table_name, credentialsProvider,category,items);
+	        DDBH = new DynamoDBHandler(region, items_table_name,category,items);
 	        DDBH.deleteTable();
 
 	        for(i=1 ; i<=NumberOfshops ; i++)
 	        {
-	        DDBH = new DynamoDBHandler(region, table_name+i, credentialsProvider,itemName,amount);
+	        DDBH = new DynamoDBHandler(region, table_name+i,itemName,amount);
 	        DDBH.deleteTable();
 	        }
 	    	
 	            
 	}
-	    
-    public static ProfileCredentialsProvider readCredentials() {
-    	
-        ProfileCredentialsProvider credentialsProvider = new ProfileCredentialsProvider();
-        try {
-            credentialsProvider.getCredentials();
-        } catch (Exception e) {
-            throw new AmazonClientException(
-                    "Cannot load the credentials from the credential profiles file. " +
-                    "Please make sure that your credentials file is at the correct " +
-                    "location (C:\\Users\\BorisM\\.aws\\credentials), and is in valid format.",
-                    e);
-        }
-        return credentialsProvider;
-    }
 	
     private static File createCategoryFile() throws IOException {
     	

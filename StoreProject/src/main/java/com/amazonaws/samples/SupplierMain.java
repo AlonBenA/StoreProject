@@ -16,9 +16,6 @@ public class SupplierMain {
 	static Scanner sc = new Scanner(System.in);
 	static int NumberOfshops = 2;
 	
-	static ProfileCredentialsProvider credentialsProvider  = readCredentials(); 
-
-	
 
 	public static void main(String[] args) {
 		
@@ -40,7 +37,7 @@ public class SupplierMain {
 		shopsInventory = connectToShopsInventory();
 		
 		//Connect to queue Shortage
-		SQSHandler sqsShortageHandler = new SQSHandler(credentialsProvider, region, queueMissName);
+		SQSHandler sqsShortageHandler = new SQSHandler( region, queueMissName);
 
 		
 
@@ -93,7 +90,7 @@ public class SupplierMain {
 		
         for(i=1; i<= NumberOfshops ; i++)
         {
-        	shopsInventory[i-1] = new DynamoDBHandler(region, table_name+i, credentialsProvider,itemName,amount);
+        	shopsInventory[i-1] = new DynamoDBHandler(region, table_name+i,itemName,amount);
         }
 		
 		return shopsInventory;
@@ -210,22 +207,6 @@ public class SupplierMain {
 		
 		return number;
 	}
-	
-	
-    public static ProfileCredentialsProvider readCredentials() {
-    	
-        ProfileCredentialsProvider credentialsProvider = new ProfileCredentialsProvider();
-        try {
-            credentialsProvider.getCredentials();
-        } catch (Exception e) {
-            throw new AmazonClientException(
-                    "Cannot load the credentials from the credential profiles file. " +
-                    "Please make sure that your credentials file is at the correct " +
-                    "location (C:\\Users\\BorisM\\.aws\\credentials), and is in valid format.",
-                    e);
-        }
-        return credentialsProvider;
-    }
     
     //added the missing Amount + 100 of item to the shop database 
     public static void AddProductsToShop(int shopNumber,ArrayList<Product> products,DynamoDBHandler[] shopsInventory)
