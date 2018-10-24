@@ -27,13 +27,14 @@ public class SupplierMain {
 	}
 	
 	
-	
 	public static void Supplier()
 	{
 		String message = null;
 		ArrayList<Product> products = new ArrayList<Product>();
     	int shopNumber = -1;
 		
+		getNumberOfShops();
+    	
 		//Create array of shops Inventory
 		DynamoDBHandler[] shopsInventory = null;
 		shopsInventory = connectToShopsInventory();
@@ -61,6 +62,24 @@ public class SupplierMain {
 				products.clear();
 			}
 
+	}
+	
+	
+	public static void getNumberOfShops()
+	{
+		try {
+            
+            System.out.println("Enter number of shops ");
+            
+            while(NumberOfshops < 1)
+            {
+            	NumberOfshops=Integer.valueOf(sc.nextLine());
+            }
+            
+        } catch (Exception e) {
+        	System.out.println("this is not a number, 2 is defualt");
+        	NumberOfshops = 2;
+        }
 	}
 	
 	//Connects to the store database
@@ -107,16 +126,16 @@ public class SupplierMain {
     {
     	int i;
     	int shopNumber = 0;
-    	int placeOfNumberOfShopInArray = 0;
-    	int placeOfProductsInArray = 1;
+    	int placeOfShopNumberInMessage = 0;
+    	int placeOfProductsInMessage = 1;
 		Product product = null;
     	
     	String[] SplitMessageByComma = message.split(",");
-    	shopNumber = CheckNumber(SplitMessageByComma[placeOfNumberOfShopInArray]);
+    	shopNumber = CheckNumber(SplitMessageByComma[placeOfShopNumberInMessage]);
     	shopNumber = CheckNumberOfShop(shopNumber);
     	
     	
-    	for(i=placeOfProductsInArray; i < SplitMessageByComma.length; i++)
+    	for(i=placeOfProductsInMessage; i < SplitMessageByComma.length; i++)
     	{
     		String[] SplitProductBySpace = SplitMessageByComma[i].split(" ");
     		product = CheckProductString(SplitProductBySpace);
@@ -181,7 +200,7 @@ public class SupplierMain {
 	public static int CheckNumberOfShop(int number)
 	{
 		
-		if(number < 0 || number >= NumberOfshops)
+		if(number < 1 || number >= NumberOfshops)
 		{
 			number = -1;
 		}
@@ -211,11 +230,12 @@ public class SupplierMain {
     {
     	int i;
     	int numberOfExtraProducts = 100;
+    	int shopNumberInArray = shopNumber-1;
     	
     	
     	for(i = 0 ; i < products.size(); i++)
     	{
-    		shopsInventory[shopNumber].putItem(products.get(i).getName(), numberOfExtraProducts + products.get(i).getAmount());
+    		shopsInventory[shopNumberInArray].putItem(products.get(i).getName(), numberOfExtraProducts + products.get(i).getAmount());
     	}
     	
     	
