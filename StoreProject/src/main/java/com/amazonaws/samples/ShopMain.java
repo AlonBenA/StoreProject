@@ -41,9 +41,7 @@ public class ShopMain {
 
 			if (choise == 1) {
 				addProductsToShopInventory();
-				System.out.println("shop Inventory ready");
 			} else if (choise == 2) {
-
 				Shop();
 				System.out.println("shop exit");
 			} else {
@@ -72,16 +70,19 @@ public class ShopMain {
 					newProduct[1] = sc.nextLine();
 					Products.add(CheckProductString(newProduct));
 				}
+				
+				for (Product p : Products) {
+					int currentAmount = shopInventory.retrieveItemAmount(p.getName());
+					shopInventory.putItem(p.getName(), p.getAmount() + currentAmount);
+				}
+				System.out.println("shop Inventory ready");
 			} else {
 				System.out.println("num Of Products not valid must > 0 ");
 			}
 		} catch (Exception e) {
 			System.out.println("Exception it's not number");
 		}
-		for (Product p : Products) {
-			int currentAmount = shopInventory.retrieveItemAmount(p.getName());
-			shopInventory.putItem(p.getName(), p.getAmount() + currentAmount);
-		}
+		
 	}
 	
 	//Prepare to get another order from sqs order id
@@ -105,7 +106,7 @@ public class ShopMain {
 			orderId = getMessage(sqsOrderHandler);
 			orderContent = order_table.retrieveItemString(orderId);
 			// order format "nameItem quantity,nameItem quantity,..."
-			
+			System.out.println("The order content is: "+orderContent);
 			// get products from orderContent
 			splitOrderMessage(orderContent, orderProducts);
 
@@ -114,6 +115,7 @@ public class ShopMain {
 
 			// update status
 			order_table.putOrderToTable(orderId, orderContent, newStatusOrder);
+			System.out.println("prepere order is finish");
 			
 			if (orderProducts.size() > 0) {
 				orderProducts.clear();
@@ -159,8 +161,8 @@ public class ShopMain {
 				shopInventory.putItem(nameProduct, currentAmount);
 			} else {
 				// Example message
-				// String message = "0,vodka 5,XL 5,beer 12,";
-				shortageMessege += nameProduct + " " + currentAmount + ",";
+				// String message = "1,vodka 5,XL 5,beer 12,";
+				shortageMessege += nameProduct + " " + orderAmount + ",";
 			}
 		}
 		if (shortageMessege.compareTo("") != 0) {

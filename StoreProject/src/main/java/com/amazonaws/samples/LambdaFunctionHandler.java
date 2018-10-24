@@ -21,20 +21,26 @@ public class LambdaFunctionHandler implements RequestHandler<DynamodbEvent, Void
     @Override
     public Void handleRequest(DynamodbEvent dynamodbEvent, Context context) {
     	String orderId=null;
-    	
+    	String status=null;
 		for (DynamodbStreamRecord record : dynamodbEvent.getRecords()) {
 
             if (record == null) {
                 continue;
             }
             orderId=record.getDynamodb().getKeys().get("orderId").getS();
-            
+
+        	
+        	status=record.getDynamodb().getNewImage().get("status").getS();
+        	
+            context.getLogger().log("status: " + status );
             context.getLogger().log("orderId: " + orderId );
             
-            sendMessage(orderId);
-            context.getLogger().log("myQueueUrl: " +myQueueUrl );
-            context.getLogger().log("queueOrderName: " +queueOrderName );
-            context.getLogger().log("Message done \n\n\n" );
+            if("undone".equals(status)) {
+            	sendMessage(orderId);
+            	context.getLogger().log("myQueueUrl: " +myQueueUrl );
+            	context.getLogger().log("queueOrderName: " +queueOrderName );
+            	context.getLogger().log("Message done \n\n\n" );
+            }
         }
 
         return null;

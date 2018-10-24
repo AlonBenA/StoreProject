@@ -116,6 +116,8 @@ public class SupplierMain {
 		
 		Stringmessage = message.getBody();
 		
+		System.out.println(Stringmessage);
+		
 		sqsShortageHandler.DeleteMessage(message);
 		
 		return Stringmessage;
@@ -231,11 +233,12 @@ public class SupplierMain {
     	int i;
     	int numberOfExtraProducts = 100;
     	int shopNumberInArray = shopNumber-1;
-    	
+		
     	
     	for(i = 0 ; i < products.size(); i++)
     	{
-    		shopsInventory[shopNumberInArray].putItem(products.get(i).getName(), numberOfExtraProducts + products.get(i).getAmount());
+    		int currentAmount = shopsInventory[shopNumberInArray].retrieveItemAmount(products.get(i).getName());
+    		shopsInventory[shopNumberInArray].putItem(products.get(i).getName(), currentAmount + numberOfExtraProducts + products.get(i).getAmount());
     	}
     	
     	
