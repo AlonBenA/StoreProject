@@ -268,6 +268,7 @@ public class DynamoDBHandler {
 	    catch (Exception e) {
 	        System.err.println("GetItem failed.");
 	        System.err.println(e.getMessage());
+	        Amount = 0 ;
 	    }
 	    
 	    return Amount;

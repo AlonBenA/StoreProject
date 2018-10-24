@@ -89,7 +89,7 @@ public class SupplierMain {
 		String itemName = "itemName";
 		String amount = "amount";
 
-		DynamoDBHandler[] shopsInventory = new DynamoDBHandler[2];
+		DynamoDBHandler[] shopsInventory = new DynamoDBHandler[NumberOfshops];
 		
         for(i=1; i<= NumberOfshops ; i++)
         {
@@ -103,7 +103,7 @@ public class SupplierMain {
 	public static String getMessage(SQSHandler sqsShortageHandler)
 	{
 		//Example message
-		//String message = "0,vodka 5,XL 5,beer 12,";
+		//String message = "2,vodka 5,XL 5,beer 12,";
 		String Stringmessage = "";
 		Message message = null;
 		
@@ -202,7 +202,7 @@ public class SupplierMain {
 	public static int CheckNumberOfShop(int number)
 	{
 		
-		if(number < 1 || number >= NumberOfshops)
+		if(number < 1 || number > NumberOfshops)
 		{
 			number = -1;
 		}
@@ -232,8 +232,10 @@ public class SupplierMain {
     {
     	int i;
     	int numberOfExtraProducts = 100;
+    	
     	int shopNumberInArray = shopNumber-1;
-		
+    	System.out.println("shopNumber " + shopNumber);
+    	System.out.println("shopNumberInArray " + shopNumberInArray);
     	
     	for(i = 0 ; i < products.size(); i++)
     	{
