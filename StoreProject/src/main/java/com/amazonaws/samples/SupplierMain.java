@@ -74,7 +74,7 @@ public class SupplierMain {
 		
         for(i=1; i<= NumberOfshops ; i++)
         {
-        	shopsInventory[i] = new DynamoDBHandler(region, table_name+i, credentialsProvider,itemName,amount);
+        	shopsInventory[i-1] = new DynamoDBHandler(region, table_name+i, credentialsProvider,itemName,amount);
         }
 		
 		return shopsInventory;
