@@ -67,8 +67,6 @@ public class Controller {
 		categoriesBox.setItems(categoriesList);
 		initMap();
 		
-		//download images
-		
 		
 	}
 	
