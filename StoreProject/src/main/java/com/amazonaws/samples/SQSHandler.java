@@ -29,21 +29,20 @@ public class SQSHandler {
 	private String myQueueUrl;
 	
 	
-	public SQSHandler(ProfileCredentialsProvider credentialsProvider,String region,String queueName)
+	public SQSHandler(String region,String queueName)
 	{
 		this.region = region;
 		this.queueName = queueName;
 		
-		init(credentialsProvider);
+		init();
 		
 	}
 	
 	
 	
-	private void init(ProfileCredentialsProvider credentialsProvider)
+	private void init()
 	{
 		sqs = AmazonSQSClientBuilder.standard()
-	//			.withCredentials(credentialsProvider)
                 .withRegion(region)
                 .build();
 		

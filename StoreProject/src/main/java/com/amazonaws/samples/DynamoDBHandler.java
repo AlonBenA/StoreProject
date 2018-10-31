@@ -31,7 +31,7 @@ public class DynamoDBHandler {
 	private String colVal2;
 
 	
-	public DynamoDBHandler(String region,String table_name, ProfileCredentialsProvider credentialsProvider,String colKey,String colVal)
+	public DynamoDBHandler(String region,String table_name,String colKey,String colVal)
 	{
 		this.region = region;
 		this.colVal = colVal;
@@ -40,10 +40,10 @@ public class DynamoDBHandler {
 
 		this.table_name = table_name;
 
-		initTable(credentialsProvider);
+		initTable();
 	}
 	
-	public DynamoDBHandler(String region,String table_name, ProfileCredentialsProvider credentialsProvider,String colKey,String colVal,String colVal2)
+	public DynamoDBHandler(String region,String table_name  ,String colKey,String colVal,String colVal2)
 	{
 		this.region = region;
 		this.colVal = colVal;
@@ -52,14 +52,13 @@ public class DynamoDBHandler {
 
 		this.table_name = table_name;
 
-		initTable(credentialsProvider);
+		initTable();
 	}
 	
 	
-	private void initTable(ProfileCredentialsProvider credentialsProvider)
+	private void initTable()
 	{
 		ddb = AmazonDynamoDBClientBuilder.standard()
-		//		.withCredentials(credentialsProvider)
 	             .withRegion(region)
 	             .build();	
 		

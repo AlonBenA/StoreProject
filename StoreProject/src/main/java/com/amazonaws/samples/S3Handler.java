@@ -19,23 +19,22 @@ public class S3Handler {
 	private String bucketName;
 	
 	
-	public S3Handler(AWSCredentials credentials,String region,String bucketName) {
+	public S3Handler(String region,String bucketName) {
 		
 		this.region = region;
 		this.bucketName = bucketName;
 		
-		init(credentials);
+		init();
 		
 	}
 	
 	
-	private void init(AWSCredentials credentials)
+	private void init()
 	{
         try {
 		
 		
 		  s3 = AmazonS3ClientBuilder.standard()
-	//	            .withCredentials(new AWSStaticCredentialsProvider(credentials))
 		            .withRegion(region)
 		            .build();
 		  
