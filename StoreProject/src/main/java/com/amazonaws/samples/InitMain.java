@@ -28,6 +28,7 @@ import com.amazonaws.services.s3.model.S3Object;
 public class InitMain {
 	
 	//this class is for initial the infrastructure of the shop in empty aws system
+//
 static int NumberOfshops = 0;
 static String region = "us-east-2";
 static HashMap<String, String> itemCate = new HashMap<String, String>();
@@ -37,7 +38,7 @@ static String categoryFileName = "categoryList";
 
 
 //bucketPicName 
-static 	String bucketPicName = "afekapicturebucketalonitayoran";
+static 	String bucketPicName = "fffffffffffffffffafekapicturebucketalonitayoran";
 
 //queue names
 static String queueMissName = new String("queueShortage");
@@ -104,7 +105,7 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
 			}	
 		}catch(Exception e)
 		{
-			System.out.println("Exception it's not 1 or 2");
+			e.printStackTrace();
 		}
 	}
 	
@@ -147,6 +148,7 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
 		 	initpicbucketS3();
 		 	initSQS();
 		 	enterItemsNames();
+		 	putIDNumDynamoDB();
 			
 	 }
 	
@@ -174,14 +176,20 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
 	 {
 		 	int i;
 	        DynamoDBHandler DDBH;
-	        DDBH = new DynamoDBHandler(region, order_table_name,orderId,orderContent,orderStatus);
+	        
+	        DDBH = new DynamoDBHandler(region, order_table_name,orderId,orderContent,orderStatus);;
 	        DDBH = new DynamoDBHandler(region, items_table_name,category,items);
+
 
 	        for(i=1 ; i<=NumberOfshops ; i++)
 	        {
 	        	DDBH = new DynamoDBHandler(region, table_name+i,itemName,amount);
 	        }
-
+	 }
+	 
+	 public static void  putIDNumDynamoDB() {
+	        DynamoDBHandler DDBH_Order_table=new DynamoDBHandler(region, order_table_name,orderId,orderContent,orderStatus);;
+	        DDBH_Order_table.putOrderToTable("0", "0", "unused");
 	 }
 
 	
