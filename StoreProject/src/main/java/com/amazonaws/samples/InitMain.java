@@ -38,7 +38,7 @@ static String categoryFileName = "categoryList";
 
 
 //bucketPicName 
-static 	String bucketPicName = "fffffffffffffffffafekapicturebucketalonitayoran";
+static 	String bucketPicName = "afekapicturebucketalonitayoran";
 
 //queue names
 static String queueMissName = new String("queueShortage");
