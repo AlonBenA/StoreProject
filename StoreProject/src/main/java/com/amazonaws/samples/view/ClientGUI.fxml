@@ -74,7 +74,7 @@
               </textFill>
             </Label>
                   <ComboBox fx:id="categoriesBox" layoutX="36.0" layoutY="104.0" onAction="#categoriesChoice" prefWidth="150.0" promptText="Categories" />
-                  <ComboBox fx:id="productsBox" layoutX="36.0" layoutY="169.0" prefWidth="150.0" promptText="Products" />
+                  <ComboBox fx:id="productsBox" layoutX="36.0" layoutY="169.0" onAction="#productChoide" prefWidth="150.0" promptText="Products" />
                   <Button layoutX="37.0" layoutY="292.0" mnemonicParsing="false" onAction="#add" text="Add" />
                   <TextField fx:id="qntField" layoutX="37.0" layoutY="233.0" promptText="Quantity" />
           </children>
@@ -84,7 +84,7 @@
             <AnchorPane id="Content" minHeight="-1.0" minWidth="-1.0" prefHeight="545.0" prefWidth="430.0">
               <children>
                 <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="View" textAlignment="CENTER" textFill="$x2" wrapText="false" />
-                        <ImageView fitHeight="288.0" fitWidth="286.0" layoutX="72.0" layoutY="59.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="imageView" fitHeight="288.0" fitWidth="286.0" layoutX="72.0" layoutY="59.0" pickOnBounds="true" preserveRatio="true" />
               </children>
             </AnchorPane>
           </content>
