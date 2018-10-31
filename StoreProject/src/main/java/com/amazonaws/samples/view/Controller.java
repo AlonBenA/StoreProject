@@ -5,14 +5,9 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageInputStream;
-
 import com.amazonaws.samples.DynamoDBHandler;
 import com.amazonaws.samples.S3Handler;
 import com.amazonaws.services.fms.model.InvalidInputException;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.S3Object;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
@@ -43,12 +38,9 @@ public class Controller {
 	private DynamoDBHandler itemsDynamoDBHandler;
 	private DynamoDBHandler ordersDynamoDBHandler;
 	private S3Handler S3HproductImages;
-	private S3Object image;
-	
 	ObservableList<String> categoriesList = FXCollections.observableArrayList("alcohol", "drinks");
 	
 	private HashMap<String, ObservableList<String>> productsByCategoryMap = new HashMap<String, ObservableList<String>>();
-	private HashMap<String, Image> imageseOfProductMap = new HashMap<String, Image>();
 
 	@FXML
 	private ComboBox<String> categoriesBox;
@@ -69,11 +61,11 @@ public class Controller {
 	@FXML
 	private void initialize() {
 		
-		itemsDynamoDBHandler = new DynamoDBHandler(region, items_table_name, null,category,items);
-		ordersDynamoDBHandler = new DynamoDBHandler(region, order_table_name, null,orderId,orderContent,orderStatus);
-		S3HproductImages = new S3Handler(null, region, bucketName);
+		itemsDynamoDBHandler = new DynamoDBHandler(region, items_table_name, category,items);
+		ordersDynamoDBHandler = new DynamoDBHandler(region, order_table_name, orderId,orderContent,orderStatus);
+		S3HproductImages = new S3Handler(region, bucketName);
 		categoriesBox.setItems(categoriesList);
-		initMaps();
+		initMap();
 		
 		//download images
 		
@@ -93,7 +85,7 @@ public class Controller {
 		try {
 			BufferedImage bufferedImage = ImageIO.read(S3HproductImages.getItem(productsBox.getValue()).getObjectContent());
 			Image image = SwingFXUtils.toFXImage(bufferedImage, null);
-			imageView.setImage((Image)image);
+			imageView.setImage(image);
 			
 		} catch (IOException e) {
 			System.err.println("Failed to read Image: " + productsBox.getValue());
@@ -182,48 +174,15 @@ public class Controller {
 		
 	}
 	
-	private void initMaps() {
-		 //When server is up
+	private void initMap() {
+		 
 		for (String cat : categoriesList) {
 			String str = itemsDynamoDBHandler.retrieveItemString(cat);
 			ObservableList<String> productList = FXCollections.observableArrayList(str.split(","));
 			productsByCategoryMap.put(cat, productList);
 			
-			for (String prod : productList)
-				imageseOfProductMap.put(prod, null);
 		}
-		/*
-		//meanwhile just for testing
-		String str = "vodka,beer,arak,whiskey,wine";
-		ObservableList<String> alcoLst = FXCollections.observableArrayList(str.split(","));
-		ObservableList<String> drnkLst = FXCollections.observableArrayList("XL");
-		map.put("alcohol", alcoLst);
-		map.put("drinks", drnkLst);
-		*/
-	}
 	
-	private void initImages() {
-		
-		//image = S3HproductImages.getItem(productsBox.getValue());
-		//ObjectMetadata temp = image.getObjectContent();
-		//Image value;
-		
-		
-		//ImageInputStream iin = ImageIO.createImageInputStream(o.getObjectContent());
-		//Image img = ImageIO.read(iin);  
-		
-		
-		try {
-			BufferedImage bufferedImage = ImageIO.read(S3HproductImages.getItem(productsBox.getValue()).getObjectContent());
-			Image image = SwingFXUtils.toFXImage(bufferedImage, null);
-			imageView.setImage((Image)image);
-			
-		} catch (IOException e) {
-			System.err.println("Failed to read Image: " + productsBox.getValue());
-			e.printStackTrace();
-		}
-		
-		
 	}
 
 }
