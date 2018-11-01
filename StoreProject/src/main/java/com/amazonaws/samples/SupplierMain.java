@@ -14,7 +14,7 @@ public class SupplierMain {
 	static String table_name = "DatabaseShop";
 	static String region = "us-east-2";
 	static Scanner sc = new Scanner(System.in);
-	static int NumberOfshops = 2;
+	static int NumberOfshops;
 	
 
 	public static void main(String[] args) {
@@ -29,6 +29,7 @@ public class SupplierMain {
 		String message = null;
 		ArrayList<Product> products = new ArrayList<Product>();
     	int shopNumber = -1;
+		int continueWork = 1;
 		
 		getNumberOfShops();
     	
@@ -38,8 +39,8 @@ public class SupplierMain {
 		
 		//Connect to queue Shortage
 		SQSHandler sqsShortageHandler = new SQSHandler( region, queueMissName);
-
 		
+		while(continueWork == 1) {
 
 			//Get message
 			message = getMessage(sqsShortageHandler);
@@ -56,8 +57,14 @@ public class SupplierMain {
 			
 			if(products.size() > 0)
 			{
+				
 				products.clear();
 			}
+			
+			continueWork = SendMoreSupply();
+		}
+		
+		System.out.println("Goodbye");
 
 	}
 	
@@ -65,7 +72,7 @@ public class SupplierMain {
 	public static void getNumberOfShops()
 	{
 		try {
-            
+			NumberOfshops = -1;
             System.out.println("Enter number of shops ");
             
             while(NumberOfshops < 1)
@@ -226,6 +233,28 @@ public class SupplierMain {
     	
     	
     }
+    
+    
+    private static int SendMoreSupply() {
+		int val = -1;
+		System.out.println("Send More Supply:");
+		System.out.println("1) yes");
+		System.out.println("0) no");
+		while (val < 0 || val > 1) {
+			try {
+				val = Integer.valueOf(sc.nextLine());
+
+				if (val == 1 || val == 0) {
+					return val;
+				} else {
+					System.out.println("it's not 1 or 0");
+				}
+			} catch (Exception e) {
+				System.out.println("Exception it's not a number");
+			}
+		}
+		return -1;
+	}
     
 
 }
