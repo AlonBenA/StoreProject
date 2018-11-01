@@ -234,7 +234,7 @@ public class SupplierMain {
     	
     }
     
-    
+    //ask the user if he waht to get send more supply to the srores
     private static int SendMoreSupply() {
 		int val = -1;
 		System.out.println("Send More Supply:");
