@@ -1,29 +1,14 @@
 package com.amazonaws.samples;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.UUID;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 
-import com.amazonaws.services.sqs.model.Message;
-import com.sun.javafx.geom.PickRay;
 import com.amazonaws.AmazonClientException;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
-import com.amazonaws.services.s3.model.S3Object;
 
 public class InitMain {
 	
@@ -32,10 +17,6 @@ public class InitMain {
 static int NumberOfshops = 0;
 static String region = "us-east-2";
 static HashMap<String, String> itemCate = new HashMap<String, String>();
-
-//files names
-static String categoryFileName = "categoryList";
-
 
 //bucketPicName 
 static 	String bucketPicName = "afekapicturebucketalonitayoran";
@@ -155,8 +136,8 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
 	 private static void enterItemsNames() {
 		 DynamoDBHandler DDBH = new DynamoDBHandler(region, items_table_name,category,items);
 
-		 Set set = itemCate.entrySet();
-         Iterator iterator = set.iterator();
+		 Set<?> set = itemCate.entrySet();
+         Iterator<?> iterator = set.iterator();
          while(iterator.hasNext()) {
             Map.Entry mentry = (Map.Entry)iterator.next();
    		 	DDBH.putCategoryToTable(mentry.getKey().toString(), mentry.getValue().toString());
@@ -199,8 +180,8 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
         
         try {
         	 /* Display content using Iterator*/
-            Set set = itemCate.entrySet();
-            Iterator iterator = set.iterator();
+            Set<?> set = itemCate.entrySet();
+            Iterator<?> iterator = set.iterator();
             while(iterator.hasNext()) {
                Map.Entry mentry = (Map.Entry)iterator.next();
                String[] itemlist = mentry.getValue().toString().split(",");
@@ -210,7 +191,6 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
                }
             }
             
-            s3Handler.putFile(createCategoryFile(), categoryFileName);
         					
 		} catch (Exception e) {
 			// 
@@ -236,8 +216,8 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
 	        
 			 initItemsList();
 	        
-			 Set set = itemCate.entrySet();
-	            Iterator iterator = set.iterator();
+			 Set<?> set = itemCate.entrySet();
+	            Iterator<?> iterator = set.iterator();
 	            while(iterator.hasNext()) {
 	               Map.Entry mentry = (Map.Entry)iterator.next();
 	               String[] itemlist = mentry.getValue().toString().split(",");
@@ -247,7 +227,6 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
 	            }
 	            }
 	    		   
-	        s3Handler.DeleteObjectFromBucket(categoryFileName); 
 	    	s3Handler.DeleteBucket();
 	    	
 	        
@@ -268,24 +247,6 @@ static String categoryItemsArray[] = {"vodka,beer,arak,whiskey,wine,","XL,"};
 	    	
 	            
 	}
-	
-    private static File createCategoryFile() throws IOException {
-    	
-    	int i;
-    	
-        File file = File.createTempFile("Category", ".txt");
-        file.deleteOnExit();
-        Writer writer = new OutputStreamWriter(new FileOutputStream(file));
-
-        for(i=0;i<categoryArray.length;i++)
-        {
-        	 writer.write(categoryArray[i]+"\n");
-        }
-        
-        writer.close();
-
-        return file;
-    }
 	
     
     public static void getNumberOfStores()

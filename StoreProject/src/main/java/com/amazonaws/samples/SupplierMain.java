@@ -2,10 +2,6 @@ package com.amazonaws.samples;
 
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.Map.Entry;
-
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.sqs.model.Message;
 
 public class SupplierMain {

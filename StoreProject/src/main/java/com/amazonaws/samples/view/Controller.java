@@ -81,9 +81,12 @@ public class Controller {
 	@FXML
 	private void productChoide() {
 		try {
-			BufferedImage bufferedImage = ImageIO.read(S3HproductImages.getItem(productsBox.getValue()).getObjectContent());
-			Image image = SwingFXUtils.toFXImage(bufferedImage, null);
-			imageView.setImage(image);
+			String choice = productsBox.getValue();
+			if(choice!=null) {
+				BufferedImage bufferedImage = ImageIO.read(S3HproductImages.getItem(choice).getObjectContent());
+				Image image = SwingFXUtils.toFXImage(bufferedImage, null);
+				imageView.setImage(image);
+			}
 			
 		} catch (IOException e) {
 			System.err.println("Failed to read Image: " + productsBox.getValue());
@@ -121,7 +124,7 @@ public class Controller {
 		catch(NumberFormatException e) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error!");
-			alert.setContentText("Quantity must be an integer! jerk off");
+			alert.setContentText("Quantity must be an integer!");
 			alert.showAndWait();
 		}
 		catch(InvalidInputException e) {

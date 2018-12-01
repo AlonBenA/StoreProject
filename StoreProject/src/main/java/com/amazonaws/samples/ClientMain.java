@@ -10,10 +10,7 @@ import javafx.stage.Stage;
 public class ClientMain extends Application {
 	
 	private VBox root;
-	
-	
-	
-	
+
 	@Override
 	public void start(Stage primaryStage) {
 		try {
